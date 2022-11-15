@@ -17,8 +17,15 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                print(pygame.mouse.get_pos())
+                
+                for sprite in level.sprites['Player']:
+                    sprite.rect.x = pygame.mouse.get_pos()[0]
+                    sprite.rect.y = pygame.mouse.get_pos()[1]
     
-    screen.fill('black')
+    screen.fill((162, 235, 250))
     level.run()
 
     pygame.display.update()
