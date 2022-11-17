@@ -1,5 +1,5 @@
 import pygame
-from settings import screen_width, screen_height, tile_size, scale, ntiles_x, ntiles_y
+from settings import screen_width, screen_height, tile_size, global_scale, ntiles_x, ntiles_y
 
 class Background:
     def __init__(self, images, surface):

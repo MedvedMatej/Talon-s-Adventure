@@ -1,6 +1,6 @@
 import pygame
 from tile import Tile, StaticTile, AnimatedTile, Player, Enemy
-from settings import tile_size, player_speed, screen_width, screen_height
+from settings import tile_size, player_speed, screen_width, screen_height, global_scale
 from collections import defaultdict
 from imports import import_csv_layout, import_cut_graphics, import_folder
 from background import Background
@@ -53,11 +53,11 @@ class Level:
                 if tile != '-1':
                     if animated:
                         tileClass = globals()[tile_type]
-                        sprite = tileClass((column*tile_size*self.sprites_scale[tile_type], row*tile_size*self.sprites_scale[tile_type]), tile_size*self.sprites_scale[tile_type], f'./assets/{tile_type.lower()}/walk')
+                        sprite = tileClass((column*tile_size*self.sprites_scale[tile_type]*global_scale, row*tile_size*self.sprites_scale[tile_type]*global_scale), tile_size*self.sprites_scale[tile_type]*global_scale, f'./assets/{tile_type.lower()}/walk')
                         self.sprites[tile_type].add(sprite)
                     else:
                         tile_surface = self.sprites_graphics[tile_type][int(tile)]
-                        sprite = StaticTile((column*tile_size*self.sprites_scale[tile_type], row*tile_size*self.sprites_scale[tile_type]),tile_size*self.sprites_scale[tile_type], tile_surface)
+                        sprite = StaticTile((column*tile_size*self.sprites_scale[tile_type]*global_scale, row*tile_size*self.sprites_scale[tile_type]*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface)
                         self.sprites[tile_type].add(sprite)
 
         return sprite_group

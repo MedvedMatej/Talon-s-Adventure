@@ -16,7 +16,7 @@ def import_cut_graphics(file_path, width=tile_size, height=tile_size, scale=4):
         for column in range(sheet.get_width()//width):
             new_sheet = pygame.Surface((width, height), flags=pygame.SRCALPHA)
             new_sheet.blit(sheet, (0,0), (column*width, row*height, column*width+width, row*height+height))
-            new_sheet = pygame.transform.scale(new_sheet, (width*scale, height*scale))
+            new_sheet = pygame.transform.scale(new_sheet, (width*scale*global_scale, height*scale*global_scale))
             tiles.append(new_sheet)
     return tiles
 
@@ -25,7 +25,7 @@ def import_folder(folder_path, scale=4):
     for file in os.listdir(folder_path):
         if file.endswith('.png'):
             image = pygame.image.load(os.path.join(folder_path, file)).convert_alpha()
-            image = pygame.transform.scale(image, (tile_size*scale, tile_size*scale))
+            image = pygame.transform.scale(image, (tile_size*scale*global_scale, tile_size*scale*global_scale))
             files.append(image)
     return files
 
