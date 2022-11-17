@@ -14,6 +14,28 @@ class StaticTile(Tile):
     def __init__(self, pos, size, image):
         super().__init__(pos, size)
         self.image = image
+    
+    def effect(self, player):
+        print("#TODO - Collected")
+        player.available_jumps += 1
+
+class PlatformTile(StaticTile):
+    def __init__(self, pos, size, image, direction=(0,0), speed=1):
+        super().__init__(pos, size, image)
+        self.direction = pygame.math.Vector2(direction)
+        self.speed = speed
+
+    def move(self):
+        self.rect.x += self.direction.x * self.speed
+        self.rect.y += self.direction.y * self.speed
+
+    def reverse(self):
+        self.direction.x = -self.direction.x
+        self.direction.y = -self.direction.y
+
+    def update(self, shift):
+        self.rect.x += shift
+        self.move()
 
 class AnimatedTile(Tile):
     def __init__(self, pos, size, path, scale=4):
@@ -54,8 +76,6 @@ class Player(AnimatedTile):
             self.image = pygame.transform.flip(self.image, True, False)
         if self.on_ground:
             self.available_jumps = self.max_jumps
-        
-        print(self.available_jumps, self.on_ground)
 
     def apply_gravity(self):
         self.direction.y += self.gravity

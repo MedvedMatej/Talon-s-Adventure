@@ -1,5 +1,5 @@
 import pygame
-from tile import Tile, StaticTile, AnimatedTile, Player, Enemy, Bullet
+from tile import Tile, StaticTile, AnimatedTile, Player, Enemy, Bullet, PlatformTile
 from settings import tile_size, player_speed, screen_width, screen_height, global_scale, default_graphics_scale
 from collections import defaultdict
 from imports import import_csv_layout, import_cut_graphics, import_folder
@@ -17,6 +17,7 @@ class Level:
         self.decoration_layout = import_csv_layout(level_data['Decorations'])
         self.collectables_layout = import_csv_layout(level_data['Collectables'])
         self.constraints_layout = import_csv_layout(level_data['Constraints'])
+        self.show_constraints = False
         #Animated
         self.player_layout = import_csv_layout(level_data['Player'])
         self.enemy_layout = import_csv_layout(level_data['Enemy'])
@@ -24,8 +25,9 @@ class Level:
         #Import graphics
         self.sprites_graphics['Terrain'] = import_cut_graphics('./assets/background/tileset.png')
         self.sprites_graphics['Decorations'] = import_cut_graphics('./assets/background/tileset.png')
-        self.sprites_graphics['Collectables'] = import_cut_graphics('./assets/background/tileset.png')
         self.sprites_graphics['Constraints'] = import_cut_graphics('./assets/background/tileset.png')
+        self.sprites_graphics['Collectables'] = import_cut_graphics('./assets/background/tileset.png',scale=2)
+        self.sprites_scale['Collectables'] = 2
         #Animated
         
         #Create tile groups
@@ -49,12 +51,16 @@ class Level:
                 if tile != '-1':
                     if animated:
                         tileClass = globals()[tile_type]
-                        sprite = tileClass((column*tile_size*self.sprites_scale[tile_type]*global_scale, row*tile_size*self.sprites_scale[tile_type]*global_scale), tile_size*self.sprites_scale[tile_type]*global_scale, f'./assets/{tile_type.lower()}/walk')
+                        sprite = tileClass((column*tile_size*4*global_scale, row*tile_size*4*global_scale), tile_size*self.sprites_scale[tile_type]*global_scale, f'./assets/{tile_type.lower()}/walk')
                         self.sprites[tile_type].add(sprite)
                     else:
                         tile_surface = self.sprites_graphics[tile_type][int(tile)]
-                        sprite = StaticTile((column*tile_size*self.sprites_scale[tile_type]*global_scale, row*tile_size*self.sprites_scale[tile_type]*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface)
-                        self.sprites[tile_type].add(sprite)
+                        if int(tile) in [184,185, 186]:
+                            sprite = PlatformTile((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface, (1,0))
+                            self.sprites['Platforms'].add(sprite)
+                        else:
+                            sprite = StaticTile((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface)
+                            self.sprites[tile_type].add(sprite)
 
         return sprite_group
 
@@ -82,6 +88,11 @@ class Level:
                     player.rect.right = sprite.rect.left
                 elif player.direction.x < 0:
                     player.rect.left = sprite.rect.right
+        
+        for sprite in self.sprites['Collectables']:
+            if sprite.rect.colliderect(player.rect):
+                sprite.effect(player)
+                self.sprites['Collectables'].remove(sprite)
     
     def vertical_collisions(self, player):
         player.apply_gravity()
@@ -96,6 +107,17 @@ class Level:
                 elif player.direction.y < 0:
                     player.rect.top = sprite.rect.bottom
                     player.direction.y = 0
+        
+        for sprite in self.sprites['Platforms']:
+            if sprite.rect.colliderect(player.rect):
+                if player.direction.y > 0:
+                    player.rect.bottom = sprite.rect.top
+                    player.direction.y = sprite.direction.y
+                    player.direction.x = sprite.direction.x
+                    player.on_ground = True
+                elif player.direction.y < 0:
+                    player.rect.top = sprite.rect.bottom
+                    player.direction.y = 0
     
     def enemy_collisions(self):
         for enemy in self.sprites['Enemy']:
@@ -104,6 +126,12 @@ class Level:
             if pygame.sprite.spritecollide(enemy, self.sprites['Constraints'], False):
                 enemy.reverse()
                 enemy.direction.y = 0
+
+    def platform_collisions(self):
+        for platform in self.sprites['Platforms']:
+            if pygame.sprite.spritecollide(platform, self.sprites['Constraints'], False):
+                print('collide')
+                platform.reverse()
             
 
     def run(self):
@@ -135,8 +163,14 @@ class Level:
                     ##TODO: extend range?
                     if bullet.rect.x > screen_width or bullet.rect.x < 0:
                         group.remove(bullet)
+            if key == 'Platforms':
+                self.platform_collisions()
 
         #Draw
         for key, group in self.sprites.items():
-            if key != 'Constraints':
+            #DEBUG
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_1]:
+                self.show_constraints = not self.show_constraints
+            if self.show_constraints or key != 'Constraints':
                 group.draw(self.display_surface)
