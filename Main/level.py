@@ -77,23 +77,21 @@ class Level:
             self.world_shift = 0
             player.speed = player_speed
 
-    def horizontal_collisions(self):
-        player = self.player.sprite
+    def horizontal_collisions(self, player):
         player.rect.x += player.direction.x * player.speed
 
-        for sprite in self.tiles.sprites():
+        for sprite in self.sprites['Terrain']:
             if sprite.rect.colliderect(player.rect):
                 if player.direction.x > 0:
                     player.rect.right = sprite.rect.left
                 elif player.direction.x < 0:
                     player.rect.left = sprite.rect.right
     
-    def vertical_collisions(self):
-        player = self.player.sprite
+    def vertical_collisions(self, player):
         player.apply_gravity()
         player.rect.y += player.direction.y * player.speed
 
-        for sprite in self.tiles.sprites():
+        for sprite in self.sprites['Terrain']:
             if sprite.rect.colliderect(player.rect):
                 if player.direction.y > 0:
                     player.rect.bottom = sprite.rect.top
@@ -125,6 +123,12 @@ class Level:
             group.update(self.world_shift)
             if key == 'Enemy':
                 self.enemy_collisions()
+            if key == 'Player':
+                #self.scroll_x()
+                for player in group:
+                    player.get_input()
+                    self.vertical_collisions(player)
+                    self.horizontal_collisions(player)
 
         #Draw
         for key, group in self.sprites.items():

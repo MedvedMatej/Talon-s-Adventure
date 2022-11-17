@@ -37,12 +37,34 @@ class Player(AnimatedTile):
         super().__init__(pos, size, path)
         self.direction = pygame.math.Vector2(0, 0)
         self.speed = 5
+        self.gravity = 0.08
+        self.jump_speed = -1.3
 
     def update(self, shift):
         self.animate()
         self.rect.x += shift
-        self.rect.x += self.direction.x * self.speed
-        self.rect.y += self.direction.y * self.speed
+        #self.rect.x += self.direction.x * self.speed
+        #self.rect.y += self.direction.y * self.speed
+
+    def apply_gravity(self):
+        self.direction.y += self.gravity
+        self.rect.y += self.direction.y
+        
+    def jump(self):
+        self.direction.y = self.jump_speed
+
+    def get_input(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_d]:
+            self.direction.x = 1
+        elif keys[pygame.K_a]:
+            self.direction.x = -1
+            self.image = pygame.transform.flip(self.image, True, False)
+        else:
+            self.direction.x = 0
+
+        if keys[pygame.K_w]:
+            self.jump()
 
 from random import randint
 class Enemy(AnimatedTile):
