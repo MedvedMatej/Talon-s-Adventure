@@ -1,5 +1,5 @@
 import pygame
-from tile import Tile, StaticTile, AnimatedTile, Player, Enemy
+from tile import Tile, StaticTile, AnimatedTile, Player, Enemy, Bullet
 from settings import tile_size, player_speed, screen_width, screen_height, global_scale, default_graphics_scale
 from collections import defaultdict
 from imports import import_csv_layout, import_cut_graphics, import_folder
@@ -38,6 +38,8 @@ class Level:
         self.create_tile_group(self.enemy_layout, 'Enemy', animated=True)
 
         self.world_shift = 0
+
+        self.sprites['Bullet']
 
     def create_tile_group(self, layout, tile_type, animated=False):
         sprite_group = pygame.sprite.Group()
@@ -120,9 +122,18 @@ class Level:
             if key == 'Player':
                 #self.scroll_x()
                 for player in group:
-                    player.get_input()
+                    player.get_input(self.sprites)
                     self.vertical_collisions(player)
                     self.horizontal_collisions(player)
+            if key == 'Bullet':
+                for bullet in group:
+                    if pygame.sprite.spritecollide(bullet, self.sprites['Enemy'], False):
+                        group.remove(bullet)
+                    if pygame.sprite.spritecollide(bullet, self.sprites['Terrain'], False):
+                        group.remove(bullet)
+                    ##TODO: extend range?
+                    if bullet.rect.x > screen_width or bullet.rect.x < 0:
+                        group.remove(bullet)
 
         #Draw
         for key, group in self.sprites.items():
