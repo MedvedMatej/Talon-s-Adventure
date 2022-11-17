@@ -1,6 +1,6 @@
 import pygame
 from tile import Tile, StaticTile, AnimatedTile, Player, Enemy
-from settings import tile_size, player_speed, screen_width, screen_height, global_scale
+from settings import tile_size, player_speed, screen_width, screen_height, global_scale, default_graphics_scale
 from collections import defaultdict
 from imports import import_csv_layout, import_cut_graphics, import_folder
 from background import Background
@@ -8,24 +8,18 @@ class Level:
     def __init__(self, level_data, surface):
         self.sprites = defaultdict(pygame.sprite.Group)
         self.sprites_graphics = defaultdict(list)
-        self.sprites_scale = defaultdict(int)
+        self.sprites_scale = defaultdict(lambda:default_graphics_scale)
         self.display_surface = surface
         self.background = Background(level_data['background'], self.display_surface)
 
         #Set world layout and scale
         self.terrain_layout = import_csv_layout(level_data['Terrain'])
-        self.sprites_scale['Terrain'] = 4
         self.decoration_layout = import_csv_layout(level_data['Decorations'])
-        self.sprites_scale['Decorations'] = 4
         self.collectables_layout = import_csv_layout(level_data['Collectables'])
-        self.sprites_scale['Collectables'] = 4
         self.constraints_layout = import_csv_layout(level_data['Constraints'])
-        self.sprites_scale['Constraints'] = 4
         #Animated
         self.player_layout = import_csv_layout(level_data['Player'])
-        self.sprites_scale['Player'] = 4
         self.enemy_layout = import_csv_layout(level_data['Enemy'])
-        self.sprites_scale['Enemy'] = 4
         
         #Import graphics
         self.sprites_graphics['Terrain'] = import_cut_graphics('./assets/background/tileset.png')
