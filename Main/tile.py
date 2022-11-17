@@ -41,19 +41,30 @@ class Player(AnimatedTile):
         self.jump_speed = -1.3
         self.shoot_cooldown = False
         self.flipped = False
+        self.on_ground = False
+
+        self.max_jumps = 2
+        self.available_jumps = self.max_jumps
+        self.jump_cooldown = False
 
     def update(self, shift):
         self.animate()
         self.rect.x += shift
         if self.flipped:
             self.image = pygame.transform.flip(self.image, True, False)
+        if self.on_ground:
+            self.available_jumps = self.max_jumps
+        
+        print(self.available_jumps, self.on_ground)
 
     def apply_gravity(self):
         self.direction.y += self.gravity
         self.rect.y += self.direction.y
         
     def jump(self):
-        self.direction.y = self.jump_speed
+        if self.available_jumps > 0:
+            self.direction.y = self.jump_speed
+            self.on_ground = False
 
     def get_input(self, sprites):
         keys = pygame.key.get_pressed()
@@ -67,7 +78,13 @@ class Player(AnimatedTile):
             self.direction.x = 0
 
         if keys[pygame.K_w]:
-            self.jump()
+            if not self.jump_cooldown:
+                self.jump()
+                self.jump_cooldown = True
+                if self.available_jumps > 0:
+                    self.available_jumps -= 1
+        else:
+            self.jump_cooldown = False
         
         if keys[pygame.K_SPACE]:
             if not self.shoot_cooldown:
