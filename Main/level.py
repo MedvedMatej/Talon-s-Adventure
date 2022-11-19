@@ -1,5 +1,5 @@
 import pygame
-from tile import Tile, StaticTile, AnimatedTile, Enemy, Bullet, PlatformTile
+from tile import Tile, StaticTile, AnimatedTile, Enemy, Bullet, PlatformTile, CollectableTile
 from settings import tile_size, player_speed, screen_width, screen_height, global_scale, default_graphics_scale
 from collections import defaultdict
 from imports import import_csv_layout, import_cut_graphics, import_folder
@@ -59,6 +59,9 @@ class Level:
                         if int(tile) in [184,185, 186]:
                             sprite = PlatformTile((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface, (0,1))
                             self.sprites['Platforms'].add(sprite)
+                        elif tile_type == 'Collectables':
+                            sprite = CollectableTile((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface)
+                            self.sprites['Collectables'].add(sprite)
                         else:
                             sprite = StaticTile((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface)
                             self.sprites[tile_type].add(sprite)
@@ -99,9 +102,11 @@ class Level:
                     player.rect.left = sprite.rect.right
         
         for sprite in self.sprites['Collectables']:
-            if sprite.rect.colliderect(player.rect):
+            if sprite.rect.colliderect(player.rect) and sprite.active:
                 sprite.effect(player)
-                self.sprites['Collectables'].remove(sprite)
+                sprite.collect()
+                if not sprite.respawnable:
+                    self.sprites['Collectables'].remove(sprite)
     
     def vertical_collisions(self, player):
         player.apply_gravity()
@@ -182,5 +187,6 @@ class Level:
             keys = pygame.key.get_pressed()
             if keys[pygame.K_1]:
                 self.show_constraints = not self.show_constraints
+
             if self.show_constraints or key != 'Constraints':
                 group.draw(self.display_surface)

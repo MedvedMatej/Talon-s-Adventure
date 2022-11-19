@@ -14,10 +14,34 @@ class StaticTile(Tile):
     def __init__(self, pos, size, image):
         super().__init__(pos, size)
         self.image = image
-    
+        self.image_hidden = image
+class CollectableTile(StaticTile):
+    def __init__(self, pos, size, image, respawnable=True):
+        super().__init__(pos, size, image)
+        self.respawnable = respawnable
+        self.active = True
+        self.respawn_time = 5
+        self.respawn_timer = 0
+
     def effect(self, player):
-        print("#TODO - Collected")
         player.available_jumps += 1
+
+    def hide(self):
+        self.image = pygame.Surface((self.rect.width, self.rect.height), pygame.SRCALPHA)
+
+    def collect(self):
+        self.respawn_timer = self.respawn_time
+        self.active = False
+        self.hide()
+
+    def update(self, shift):
+        self.rect.x += shift
+        if not self.active:
+            self.respawn_timer -= 1/60
+            if self.respawn_timer <= 0:
+                self.active = True
+                self.image = self.image_hidden
+
 
 class PlatformTile(StaticTile):
     def __init__(self, pos, size, image, direction=(0,0), speed=1):
