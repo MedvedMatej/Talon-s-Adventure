@@ -21,12 +21,17 @@ def import_cut_graphics(file_path, width=tile_size, height=tile_size, scale=4):
     return tiles
 
 def import_folder(folder_path, scale=4):
-    files = []
-    for file in os.listdir(folder_path):
-        if file.endswith('.png'):
-            image = pygame.image.load(os.path.join(folder_path, file)).convert_alpha()
-            image = pygame.transform.scale(image, (tile_size*scale*global_scale, tile_size*scale*global_scale))
-            files.append(image)
-    return files
+    animations = {}
+    for root, _, files in (os.walk(folder_path)):
+        if len(files) > 0:
+            images = []
+            for file in files:
+                if file.endswith('.png'):
+                    image = pygame.image.load(os.path.join(root, file)).convert_alpha()
+                    image = pygame.transform.scale(image, (tile_size*scale*global_scale, tile_size*scale*global_scale))
+                    images.append(image)
+            animations[root.split("/")[-1]] = images
+
+    return animations
 
             

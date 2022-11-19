@@ -40,79 +40,25 @@ class PlatformTile(StaticTile):
 class AnimatedTile(Tile):
     def __init__(self, pos, size, path, scale=4):
         super().__init__(pos, size)
-        self.frames = import_folder(path, scale)
+        self.animations = import_folder(path, scale)
+        self.selected_animation = 'idle' if 'idle' in self.animations.keys() else list(self.animations.keys())[0]
         self.index = 0
-        self.image = self.frames[self.index]
+        self.image = self.animations[self.selected_animation][self.index]
+
+    def set_animation(self, animation):
+        if animation != self.selected_animation:
+            self.index = 0
+            self.selected_animation = animation
 
     def animate(self):
         self.index += 0.1
-        if self.index >= len(self.frames):
+        if self.index >= len(self.animations[self.selected_animation]):
             self.index = 0
-        self.image = self.frames[int(self.index)]
+        self.image = self.animations[self.selected_animation][int(self.index)]
 
     def update(self, shift):
         self.animate()
         self.rect.x += shift
-
-class Player(AnimatedTile):
-    def __init__(self, pos, size, path):
-        super().__init__(pos, size, path)
-        self.direction = pygame.math.Vector2(0, 0)
-        self.speed = 5
-        self.gravity = 0.08
-        self.jump_speed = -1.3
-        self.shoot_cooldown = False
-        self.flipped = False
-        self.on_ground = False
-
-        self.max_jumps = 2
-        self.available_jumps = self.max_jumps
-        self.jump_cooldown = False
-
-    def update(self, shift):
-        self.animate()
-        self.rect.x += shift
-        if self.flipped:
-            self.image = pygame.transform.flip(self.image, True, False)
-        if self.on_ground:
-            self.available_jumps = self.max_jumps
-
-    def apply_gravity(self):
-        self.direction.y += self.gravity
-        self.rect.y += self.direction.y
-        
-    def jump(self):
-        if self.available_jumps > 0:
-            self.direction.y = self.jump_speed
-            self.on_ground = False
-
-    def get_input(self, sprites):
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_d]:
-            self.direction.x = 1
-            self.flipped = False
-        elif keys[pygame.K_a]:
-            self.direction.x = -1
-            self.flipped = True
-        else:
-            self.direction.x = 0
-
-        if keys[pygame.K_w]:
-            if not self.jump_cooldown:
-                self.jump()
-                self.jump_cooldown = True
-                if self.available_jumps > 0:
-                    self.available_jumps -= 1
-        else:
-            self.jump_cooldown = False
-        
-        if keys[pygame.K_SPACE]:
-            if not self.shoot_cooldown:
-                sprites['Bullet'].add(Bullet((self.rect.centerx, self.rect.centery), 1, './assets/player/bullet',1, -1 if self.flipped else 1))
-                self.shoot_cooldown = True
-        else:
-            self.shoot_cooldown = False
-
 
 from random import randint
 class Enemy(AnimatedTile):

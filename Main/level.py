@@ -1,9 +1,10 @@
 import pygame
-from tile import Tile, StaticTile, AnimatedTile, Player, Enemy, Bullet, PlatformTile
+from tile import Tile, StaticTile, AnimatedTile, Enemy, Bullet, PlatformTile
 from settings import tile_size, player_speed, screen_width, screen_height, global_scale, default_graphics_scale
 from collections import defaultdict
 from imports import import_csv_layout, import_cut_graphics, import_folder
 from background import Background
+from player import Player
 class Level:
     def __init__(self, level_data, surface):
         self.sprites = defaultdict(pygame.sprite.Group)
@@ -51,12 +52,12 @@ class Level:
                 if tile != '-1':
                     if animated:
                         tileClass = globals()[tile_type]
-                        sprite = tileClass((column*tile_size*4*global_scale, row*tile_size*4*global_scale), tile_size*self.sprites_scale[tile_type]*global_scale, f'./assets/{tile_type.lower()}/walk')
+                        sprite = tileClass((column*tile_size*4*global_scale, row*tile_size*4*global_scale), tile_size*self.sprites_scale[tile_type]*global_scale, f'./assets/{tile_type.lower()}/')
                         self.sprites[tile_type].add(sprite)
                     else:
                         tile_surface = self.sprites_graphics[tile_type][int(tile)]
                         if int(tile) in [184,185, 186]:
-                            sprite = PlatformTile((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface, (1,0))
+                            sprite = PlatformTile((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface, (0,1))
                             self.sprites['Platforms'].add(sprite)
                         else:
                             sprite = StaticTile((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface)
@@ -81,8 +82,16 @@ class Level:
 
     def horizontal_collisions(self, player):
         player.rect.x += player.direction.x * player.speed
+        player.rect.x += player.platform[0] * player.platform[2]
 
         for sprite in self.sprites['Terrain']:
+            if sprite.rect.colliderect(player.rect):
+                if player.direction.x > 0:
+                    player.rect.right = sprite.rect.left
+                elif player.direction.x < 0:
+                    player.rect.left = sprite.rect.right
+
+        for sprite in self.sprites['Platforms']:
             if sprite.rect.colliderect(player.rect):
                 if player.direction.x > 0:
                     player.rect.right = sprite.rect.left
@@ -97,9 +106,11 @@ class Level:
     def vertical_collisions(self, player):
         player.apply_gravity()
         player.rect.y += player.direction.y * player.speed
+        player.rect.y += player.platform[1] * player.platform[2]
 
         for sprite in self.sprites['Terrain']:
             if sprite.rect.colliderect(player.rect):
+                player.platform = (0,0,0)
                 if player.direction.y > 0:
                     player.rect.bottom = sprite.rect.top
                     player.direction.y = 0
@@ -110,10 +121,10 @@ class Level:
         
         for sprite in self.sprites['Platforms']:
             if sprite.rect.colliderect(player.rect):
-                if player.direction.y > 0:
+                if player.direction.y >= 0:
                     player.rect.bottom = sprite.rect.top
-                    player.direction.y = sprite.direction.y
-                    player.direction.x = sprite.direction.x
+                    player.direction.y = 0
+                    player.platform = (sprite.direction.x, sprite.direction.y, sprite.speed)
                     player.on_ground = True
                 elif player.direction.y < 0:
                     player.rect.top = sprite.rect.bottom
@@ -130,7 +141,6 @@ class Level:
     def platform_collisions(self):
         for platform in self.sprites['Platforms']:
             if pygame.sprite.spritecollide(platform, self.sprites['Constraints'], False):
-                print('collide')
                 platform.reverse()
             
 
