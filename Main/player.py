@@ -13,6 +13,8 @@ class Player(AnimatedTile):
         self.jump_speed = -1.3
         self.flipped = False
         self.shoot_cooldown = False
+        self.reset_cooldown = False
+        self.save_pos = (100,100)
 
         #Jumping
         self.on_ground = False
@@ -74,6 +76,16 @@ class Player(AnimatedTile):
                 self.shoot_cooldown = True
         else:
             self.shoot_cooldown = False
+
+        if keys[pygame.K_r]:
+            if not self.reset_cooldown:
+                self.reset_position()
+        else:
+            self.reset_cooldown = False
+
+    def reset_position(self):
+        self.rect.x = self.save_pos[0]
+        self.rect.y = self.save_pos[1]
 
     def animate(self):
         if self.selected_animation == 'jump':

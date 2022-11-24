@@ -20,7 +20,7 @@ class CollectableTile(StaticTile):
         super().__init__(pos, size, image)
         self.respawnable = respawnable
         self.active = True
-        self.respawn_time = 5
+        self.respawn_time = 2
         self.respawn_timer = 0
 
     def effect(self, player):
