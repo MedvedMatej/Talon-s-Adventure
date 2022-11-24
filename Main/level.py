@@ -57,7 +57,7 @@ class Level:
                     else:
                         tile_surface = self.sprites_graphics[tile_type][int(tile)]
                         if int(tile) in [184,185, 186]:
-                            sprite = PlatformTile((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface, (0,1))
+                            sprite = PlatformTile((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface, (1,0))
                             self.sprites['Platforms'].add(sprite)
                         elif tile_type == 'Collectables':
                             sprite = CollectableTile((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface)
@@ -98,8 +98,12 @@ class Level:
             if sprite.rect.colliderect(player.rect):
                 if player.direction.x > 0:
                     player.rect.right = sprite.rect.left
+                    if sprite.direction.x < 0:
+                        player.rect.x += sprite.direction.x * sprite.speed - 1
                 elif player.direction.x < 0:
                     player.rect.left = sprite.rect.right
+                    if sprite.direction.x > 0:
+                        player.rect.x += sprite.direction.x * sprite.speed + 1
         
         for sprite in self.sprites['Collectables']:
             if sprite.rect.colliderect(player.rect) and sprite.active:
@@ -126,7 +130,7 @@ class Level:
         
         for sprite in self.sprites['Platforms']:
             if sprite.rect.colliderect(player.rect):
-                if player.direction.y >= 0:
+                if player.direction.y > 0:
                     player.rect.bottom = sprite.rect.top
                     player.direction.y = 0
                     player.platform = (sprite.direction.x, sprite.direction.y, sprite.speed)
@@ -134,6 +138,8 @@ class Level:
                 elif player.direction.y < 0:
                     player.rect.top = sprite.rect.bottom
                     player.direction.y = 0
+                    if sprite.direction.y > 0:
+                        player.rect.y += sprite.direction.y * sprite.speed + 1
     
     def enemy_collisions(self):
         for enemy in self.sprites['Enemy']:
