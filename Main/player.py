@@ -15,6 +15,7 @@ class Player(AnimatedTile):
         self.shoot_cooldown = False
         self.reset_cooldown = False
         self.save_pos = (100,100)
+        self.effects = {}
 
         #Jumping
         self.on_ground = False
@@ -33,13 +34,19 @@ class Player(AnimatedTile):
         if self.on_ground:
             self.available_jumps = self.max_jumps
 
+    def clear_effects(self):
+        self.effects = {}
+
+    def give_effects(self, effects):
+        self.effects = effects
+
     def apply_gravity(self):
         self.direction.y += self.gravity
         self.rect.y += self.direction.y
         
     def jump(self):
         if self.available_jumps > 0:
-            self.direction.y = self.jump_speed
+            self.direction.y = self.jump_speed if not 'jump_multiplier' in self.effects else self.jump_speed*self.effects['jump_multiplier']
             self.on_ground = False
             self.platform = (0,0,0)
 

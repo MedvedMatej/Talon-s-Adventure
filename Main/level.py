@@ -1,5 +1,5 @@
 import pygame
-from tile import Tile, StaticTile, AnimatedTile, Enemy, Bullet, PlatformTile, CollectableTile
+from tile import Tile, StaticTile, AnimatedTile, Enemy, Bullet, PlatformTile, CollectableTile, TerrainTile
 from settings import tile_size, player_speed, screen_width, screen_height, global_scale, default_graphics_scale
 from collections import defaultdict
 from imports import import_csv_layout, import_cut_graphics, import_folder
@@ -56,6 +56,9 @@ class Level:
                         self.sprites[tile_type].add(sprite)
                     else:
                         tile_surface = self.sprites_graphics[tile_type][int(tile)]
+                        if int(tile) in [232,233,234]:
+                            sprite = TerrainTile((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface, 'Water')
+                            self.sprites['Terrain'].add(sprite)
                         if int(tile) in [184,185, 186]:
                             sprite = PlatformTile((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface, (1,0))
                             self.sprites['Platforms'].add(sprite)
@@ -84,7 +87,10 @@ class Level:
             player.speed = player_speed
 
     def horizontal_collisions(self, player):
-        player.rect.x += player.direction.x * player.speed
+        multiplier = (1 if not 'speed_multiplier' in player.effects else player.effects['speed_multiplier'])
+        if multiplier != 1:
+            print(multiplier)
+        player.rect.x += player.direction.x * player.speed * multiplier
         player.rect.x += player.platform[0] * player.platform[2]
 
         for sprite in self.sprites['Terrain']:
@@ -117,8 +123,12 @@ class Level:
         player.rect.y += player.direction.y * player.speed
         player.rect.y += player.platform[1] * player.platform[2]
 
+        clear_effects = True
         for sprite in self.sprites['Terrain']:
             if sprite.rect.colliderect(player.rect):
+                clear_effects = False
+                if hasattr(sprite, 'effects'):
+                    player.give_effects(sprite.effects)
                 player.platform = (0,0,0)
                 if player.direction.y > 0:
                     player.rect.bottom = sprite.rect.top
@@ -127,6 +137,8 @@ class Level:
                 elif player.direction.y < 0:
                     player.rect.top = sprite.rect.bottom
                     player.direction.y = 0
+        if clear_effects:
+            player.clear_effects()
         
         for sprite in self.sprites['Platforms']:
             if sprite.rect.colliderect(player.rect):

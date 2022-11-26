@@ -15,6 +15,17 @@ class StaticTile(Tile):
         super().__init__(pos, size)
         self.image = image
         self.image_hidden = image
+
+class TerrainTile(StaticTile):
+    def __init__(self, pos,size, image, type):
+        super().__init__(pos,size, image)
+        self.type = type
+        self.effects = {}
+
+        if type == 'Water':
+            self.effects["speed_multiplier"] = 0.0
+            self.effects["jump_multiplier"] = 0.0
+
 class CollectableTile(StaticTile):
     def __init__(self, pos, size, image, respawnable=True):
         super().__init__(pos, size, image)
