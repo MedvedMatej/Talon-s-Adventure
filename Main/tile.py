@@ -23,8 +23,10 @@ class TerrainTile(StaticTile):
         self.effects = {}
 
         if type == 'Water':
-            self.effects["speed_multiplier"] = 0.0
-            self.effects["jump_multiplier"] = 0.0
+            self.effects["speed_multiplier"] = 0.5
+            self.effects["jump_multiplier"] = 0.5
+        elif type == 'Spike':
+            self.effects["damage"] = 1
 
 class CollectableTile(StaticTile):
     def __init__(self, pos, size, image, respawnable=True):
@@ -97,10 +99,10 @@ class AnimatedTile(Tile):
 
 from random import randint
 class Enemy(AnimatedTile):
-    def __init__(self, pos, size, path):
+    def __init__(self, pos, size, path, speed=5):
         super().__init__(pos, size, path)
         self.direction = pygame.math.Vector2(0.2, 0)
-        self.speed = 5
+        self.speed = speed
 
     def move(self):
         if self.direction.x < 0:
@@ -120,6 +122,13 @@ class Enemy(AnimatedTile):
         self.rect.x += shift
         self.animate()
         self.move()
+
+class SaveBlock(AnimatedTile):
+    def __init__(self, pos, size, path):
+        super().__init__(pos, size, path)
+
+    def effect(self, player):
+        player.save()
 
 class Bullet(AnimatedTile):
     def __init__(self, pos, size, path, scale=4, direction=1):

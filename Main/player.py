@@ -1,5 +1,6 @@
 import pygame
 from tile import AnimatedTile, Bullet
+import copy
 
 class Player(AnimatedTile):
     def __init__(self, pos, size, path):
@@ -14,7 +15,10 @@ class Player(AnimatedTile):
         self.flipped = False
         self.shoot_cooldown = False
         self.reset_cooldown = False
-        self.save_pos = (100,100)
+
+        #Effects
+        self.on_effected_tile = False
+        self.next_to_effected_tile = False
         self.effects = {}
 
         #Jumping
@@ -26,6 +30,10 @@ class Player(AnimatedTile):
         #Outside movement
         self.platform = (0,0,0)
 
+        #Save
+        self.saved_player = {}
+        self.save()
+
     def update(self, shift):
         self.animate()
         self.rect.x += shift
@@ -33,6 +41,20 @@ class Player(AnimatedTile):
             self.image = pygame.transform.flip(self.image, True, False)
         if self.on_ground:
             self.available_jumps = self.max_jumps
+        
+        if 'damage' in self.effects:
+            self.load_save()
+
+    def save(self):
+        for key,value in self.__dict__.items():
+            if key not in ['_Sprite__g', 'image', 'animations', 'reset_cooldown', 'saved_player']:
+                self.saved_player[key] = copy.deepcopy(value)
+        self.saved_player['reset_cooldown'] = True
+            
+
+    def load_save(self):
+        for key,value in self.saved_player.items():
+            self.__dict__[key] = copy.deepcopy(value)
 
     def clear_effects(self):
         self.effects = {}
@@ -86,13 +108,9 @@ class Player(AnimatedTile):
 
         if keys[pygame.K_r]:
             if not self.reset_cooldown:
-                self.reset_position()
+                self.load_save()
         else:
             self.reset_cooldown = False
-
-    def reset_position(self):
-        self.rect.x = self.save_pos[0]
-        self.rect.y = self.save_pos[1]
 
     def animate(self):
         if self.selected_animation == 'jump':
