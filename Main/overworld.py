@@ -2,18 +2,16 @@ import pygame
 from game_data import levels
 
 class Node(pygame.sprite.Sprite):
-    def __init__(self, position, unlocked=False, speed=15):
+    def __init__(self, position, unlocked=False, speed=5, image=None):
         super().__init__()
-        self.image = pygame.Surface((350, 250))
+        self.image = image if image else pygame.Surface((350, 250))
         self.unlocked = unlocked
         self.pos = position
         self.speed = speed
         self.target = None
 
-        if unlocked:
-            self.image.fill((160, 0, 0))
-        else:
-            self.image.fill((45, 45, 45))
+        if not unlocked:
+            self.image = pygame.image.load('assets/levels/level_banner_locked.png').convert_alpha()
         self.rect = self.image.get_rect(center=position)
 
 
@@ -27,14 +25,14 @@ class Node(pygame.sprite.Sprite):
                     self.pos = self.target
                     self.target = None
 class Overworld:
-    def __init__(self, surface, start_level=1, max_level=2):
+    def __init__(self, surface, start_level=1, max_level=2, speed= 10):
         self.surface = surface
         self.selected_level = start_level
         self.max_level = max_level
 
         self.direction = pygame.math.Vector2(0,0)
         self.shift = 0
-        self.speed = 10
+        self.speed = speed
         self.moving = False
 
         self.setup_nodes()
@@ -44,7 +42,8 @@ class Overworld:
 
         for key, value in levels.items():
             if key <= self.max_level:
-                self.nodes.add(Node(value['position'], unlocked=True, speed=self.speed))
+                print(value['path']+ '/level_banner.png')
+                self.nodes.add(Node(value['position'], unlocked=True, speed=self.speed, image=pygame.image.load(value['path']+ '/level_banner.png').convert_alpha()))
             else:  
                 self.nodes.add(Node(value['position'], speed=self.speed))
 
@@ -82,4 +81,5 @@ class Overworld:
         self.nodes.update()
         self.update()
 
+        self.surface.fill((20, 20, 20))
         self.nodes.draw(self.surface)

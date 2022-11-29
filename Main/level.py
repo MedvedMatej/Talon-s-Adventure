@@ -5,13 +5,15 @@ from collections import defaultdict
 from imports import import_csv_layout, import_cut_graphics, import_folder
 from background import Background
 from player import Player
+from game_data import levels
 class Level:
-    def __init__(self, level_data, surface):
+    def __init__(self, selected_level, surface):
+        level_data = levels[selected_level]['data']
         self.sprites = defaultdict(pygame.sprite.Group)
         self.sprites_graphics = defaultdict(list)
         self.sprites_scale = defaultdict(lambda:default_graphics_scale)
-        self.display_surface = surface
-        self.background = Background(level_data['background'], self.display_surface)
+        self.surface = surface
+        self.background = Background(level_data['background'], self.surface)
 
         #Set world layout and scale
         self.terrain_layout = import_csv_layout(level_data['Terrain'])
@@ -216,6 +218,7 @@ class Level:
             if key == 'Platforms':
                 self.platform_collisions()
 
+        self.surface.fill((162, 235, 250))
         #Draw
         for key, group in self.sprites.items():
             #DEBUG
@@ -224,4 +227,4 @@ class Level:
                 self.show_constraints = not self.show_constraints
 
             if self.show_constraints or key != 'Constraints':
-                group.draw(self.display_surface)
+                group.draw(self.surface)
