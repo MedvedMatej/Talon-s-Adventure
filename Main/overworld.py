@@ -43,9 +43,9 @@ class Overworld:
 
         for key, value in levels.items():
             if key <= self.max_level:
-                self.nodes.add(Node(value['position'], unlocked=True, speed=self.speed, image=pygame.image.load(value['path']+ '/level_banner.png').convert_alpha()))
+                self.nodes.add(Node((value['position'][0] - 425*(self.selected_level-1),value['position'][1]), unlocked=True, speed=self.speed, image=pygame.image.load(value['path']+ '/level_banner.png').convert_alpha()))
             else:  
-                self.nodes.add(Node(value['position'], speed=self.speed))
+                self.nodes.add(Node((value['position'][0] - 425*(self.selected_level-1),value['position'][1]), speed=self.speed))
 
     def input(self):
         keys = pygame.key.get_pressed()

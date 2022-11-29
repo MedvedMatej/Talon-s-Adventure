@@ -190,14 +190,13 @@ class Level:
             self.show_constraints = not self.show_constraints
         
         if keys[pygame.K_ESCAPE]:
-            self.create_overworld(self.surface,1, self.selected_level)
+            self.create_overworld(self.surface,self.selected_level, self.selected_level)
         if keys[pygame.K_p]:
-            self.create_overworld(self.surface,1, self.selected_level+1)
+            self.create_overworld(self.surface,self.selected_level, self.selected_level+1)
     
     def update(self):
         if self.win:
-            ##TODO: Swap 1 with current level after adding level shifting to overworld
-            self.create_overworld(self.surface,1, self.selected_level+1)
+            self.create_overworld(self.surface,self.selected_level, self.selected_level+1)
     
     def run(self):
         self.input()
