@@ -25,10 +25,11 @@ class Node(pygame.sprite.Sprite):
                     self.pos = self.target
                     self.target = None
 class Overworld:
-    def __init__(self, surface, start_level=1, max_level=2, speed= 10):
+    def __init__(self, surface, start_level=1, max_level=2, speed= 10, level_method=None):
         self.surface = surface
         self.selected_level = start_level
         self.max_level = max_level
+        self.create_level = level_method
 
         self.direction = pygame.math.Vector2(0,0)
         self.shift = 0
@@ -42,7 +43,6 @@ class Overworld:
 
         for key, value in levels.items():
             if key <= self.max_level:
-                print(value['path']+ '/level_banner.png')
                 self.nodes.add(Node(value['position'], unlocked=True, speed=self.speed, image=pygame.image.load(value['path']+ '/level_banner.png').convert_alpha()))
             else:  
                 self.nodes.add(Node(value['position'], speed=self.speed))
@@ -58,12 +58,15 @@ class Overworld:
                     self.direction = self.set_movement()
                     self.selected_level += 1
             
-            if keys[pygame.K_LEFT]:
+            elif keys[pygame.K_LEFT]:
                 self.moving = True
                 if self.selected_level > 1:
                     self.shift = -1
                     self.direction = self.set_movement()
                     self.selected_level -= 1
+
+            if keys[pygame.K_RETURN] and self.selected_level <= self.max_level:
+                self.create_level(self.selected_level, self.surface)
     
     def set_movement(self):
         for node in self.nodes:

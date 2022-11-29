@@ -6,12 +6,26 @@ from overworld import Overworld
 
 class Game:
     def __init__(self):
-        self.overworld = Overworld(surface=screen)
-        self.level = Level(self.overworld.selected_level,screen)
+        self.overworld = Overworld(surface=screen, level_method = self.create_level)
+        self.level = None
+        self.max_level = 2
+        self.status = 'overworld'
+
+    def create_level(self, level, surface):
+        self.level = Level(level,surface, self.create_overworld)
+        self.status = 'level'
+
+    def create_overworld(self, surface, current_level, max_level):
+        if self.max_level < max_level:
+            self.max_level = max_level
+        self.overworld = Overworld(surface, current_level, self.max_level, level_method = self.create_level)
+        self.status = 'overworld'
 
     def run(self):
-        #self.level.run()
-        self.overworld.run()
+        if self.status == 'overworld':
+            self.overworld.run()
+        elif self.status == 'level':
+            self.level.run()
 
 #Initialize pygame
 pygame.init()

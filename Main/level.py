@@ -7,13 +7,16 @@ from background import Background
 from player import Player
 from game_data import levels
 class Level:
-    def __init__(self, selected_level, surface):
+    def __init__(self, selected_level, surface, overworld_method=None):
+        self.create_overworld = overworld_method
         level_data = levels[selected_level]['data']
         self.sprites = defaultdict(pygame.sprite.Group)
         self.sprites_graphics = defaultdict(list)
         self.sprites_scale = defaultdict(lambda:default_graphics_scale)
         self.surface = surface
         self.background = Background(level_data['background'], self.surface)
+        self.selected_level = selected_level
+        self.win = False
 
         #Set world layout and scale
         self.terrain_layout = import_csv_layout(level_data['Terrain'])
@@ -181,17 +184,26 @@ class Level:
             if pygame.sprite.spritecollide(platform, self.sprites['Constraints'], False):
                 platform.reverse()
             
-
+    def input(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_1]:
+            self.show_constraints = not self.show_constraints
+        
+        if keys[pygame.K_ESCAPE]:
+            self.create_overworld(self.surface,1, self.selected_level)
+        if keys[pygame.K_p]:
+            self.create_overworld(self.surface,1, self.selected_level+1)
+    
+    def update(self):
+        if self.win:
+            ##TODO: Swap 1 with current level after adding level shifting to overworld
+            self.create_overworld(self.surface,1, self.selected_level+1)
+    
     def run(self):
-        """
-        self.scroll_x()
+        self.input()
 
-        self.player.update()
-        self.vertical_collisions()
-        self.horizontal_collisions()
-        self.player.draw(self.display_surface) """
-        #self.background.draw()
         #Update
+        self.update()
         for key, group in self.sprites.items():
             group.update(self.world_shift)
             if key == 'Enemy':
@@ -221,10 +233,5 @@ class Level:
         self.surface.fill((162, 235, 250))
         #Draw
         for key, group in self.sprites.items():
-            #DEBUG
-            keys = pygame.key.get_pressed()
-            if keys[pygame.K_1]:
-                self.show_constraints = not self.show_constraints
-
             if self.show_constraints or key != 'Constraints':
                 group.draw(self.surface)
