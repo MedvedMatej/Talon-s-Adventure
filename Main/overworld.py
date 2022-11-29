@@ -2,7 +2,7 @@ import pygame
 from game_data import levels
 
 class Node(pygame.sprite.Sprite):
-    def __init__(self, position, unlocked=False, speed=5):
+    def __init__(self, position, unlocked=False, speed=15):
         super().__init__()
         self.image = pygame.Surface((350, 250))
         self.unlocked = unlocked
@@ -19,7 +19,13 @@ class Node(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.center = self.pos
-
+        if self.target:
+            if (self.target[0] - self.pos[0]) != 0:
+                dir = (self.target[0] - self.pos[0]) / abs((self.target[0] - self.pos[0]))
+                self.pos = (self.pos[0] + self.speed * dir, self.pos[1])
+                if (dir < 0 and self.pos[0] <= self.target[0]) or (dir > 0 and self.pos[0] >= self.target[0]):
+                    self.pos = self.target
+                    self.target = None
 class Overworld:
     def __init__(self, surface, start_level=1, max_level=2):
         self.surface = surface
@@ -28,7 +34,7 @@ class Overworld:
 
         self.direction = pygame.math.Vector2(0,0)
         self.shift = 0
-        self.speed = 3
+        self.speed = 10
         self.moving = False
 
         self.setup_nodes()
@@ -48,42 +54,32 @@ class Overworld:
         if not self.moving:
             if keys[pygame.K_RIGHT]:
                 self.moving = True
-                if self.selected_level < len(levels.keys()): #self.max_level:
+                if self.selected_level < len(levels.keys()):
                     self.shift = 1
-                    self.direction = self.get_movement()
+                    self.direction = self.set_movement()
                     self.selected_level += 1
-                    print(self.selected_level)
             
             if keys[pygame.K_LEFT]:
                 self.moving = True
                 if self.selected_level > 1:
                     self.shift = -1
-                    self.direction = self.get_movement()
+                    self.direction = self.set_movement()
                     self.selected_level -= 1
-                    print(self.selected_level)
     
-    def get_movement(self):
-        start = pygame.math.Vector2(self.nodes.sprites()[self.selected_level-1].rect.center)
-        end = pygame.math.Vector2(self.nodes.sprites()[self.selected_level-1+self.shift].rect.center)
-        print(self.selected_level, "-->", self.selected_level+self.shift)
-        print(end-start)
-        return -1*(end - start).normalize()
-
-    def update_levels(self):
-        for i,node in enumerate(self.nodes):
-            if not node.target:
-                node.target = (node.pos[0] + self.shift*500, node.pos[1])
-            node.pos += self.direction * self.speed
-            print(node.target, node.pos)
-            if node.detection_radius.collidepoint(node.target):
-                node.pos = node.target
-                self.moving = False
-                self.direction = pygame.math.Vector2(0,0)
-                #node.target = None
+    def set_movement(self):
+        for node in self.nodes:
+            node.target = (node.pos[0] + -1*self.shift*425, node.pos[1])
+    
+    def update(self):
+        running = False
+        for node in self.nodes:
+            if node.target:
+                running = True
+        self.moving = running
 
     def run(self):
         self.input()
         self.nodes.update()
-        self.update_levels()
+        self.update()
+
         self.nodes.draw(self.surface)
-        #self.level.run()
