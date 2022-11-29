@@ -5,7 +5,7 @@ import copy
 class Player(AnimatedTile):
     def __init__(self, pos, size, path):
         super().__init__(pos, size, path)
-        #Animations
+        self.death_counter = 0
 
         #General movement
         self.direction = pygame.math.Vector2(0, 0)
@@ -43,11 +43,14 @@ class Player(AnimatedTile):
             self.available_jumps = self.max_jumps
         
         if 'damage' in self.effects:
+            self.death_counter += 1
+            print(self.death_counter)
             self.load_save()
+        
 
     def save(self):
         for key,value in self.__dict__.items():
-            if key not in ['_Sprite__g', 'image', 'animations', 'reset_cooldown', 'saved_player']:
+            if key not in ['_Sprite__g', 'image', 'animations', 'reset_cooldown', 'saved_player', 'death_counter']:
                 self.saved_player[key] = copy.deepcopy(value)
         self.saved_player['reset_cooldown'] = True
             

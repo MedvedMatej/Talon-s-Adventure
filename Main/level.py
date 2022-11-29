@@ -136,7 +136,6 @@ class Level:
         player.rect.y += player.direction.y * player.speed
         player.rect.y += player.platform[1] * player.platform[2]
 
-        clear_effects = True
         for sprite in self.sprites['Terrain']:
             if sprite.rect.colliderect(player.rect):
                 if hasattr(sprite, 'effects'):
@@ -153,7 +152,7 @@ class Level:
                 elif player.direction.y < 0:
                     player.rect.top = sprite.rect.bottom
                     player.direction.y = 0
-        
+
         for sprite in self.sprites['Platforms']:
             if sprite.rect.colliderect(player.rect):
                 if player.direction.y > 0:
