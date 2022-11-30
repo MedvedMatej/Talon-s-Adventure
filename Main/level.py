@@ -7,8 +7,9 @@ from background import Background
 from player import Player
 from game_data import levels
 class Level:
-    def __init__(self, selected_level, surface, overworld_method=None):
+    def __init__(self, selected_level, surface, overworld_method=None, get_action=None):
         self.create_overworld = overworld_method
+        self.get_action = get_action
         level_data = levels[selected_level]['data']
         self.sprites = defaultdict(pygame.sprite.Group)
         self.sprites_graphics = defaultdict(list)
@@ -190,7 +191,7 @@ class Level:
             self.show_constraints = not self.show_constraints
         
         if keys[pygame.K_ESCAPE]:
-            self.create_overworld(self.surface,self.selected_level, self.selected_level)
+            self.get_action('to_options')(True)
         if keys[pygame.K_p]:
             self.create_overworld(self.surface,self.selected_level, self.selected_level+1)
     

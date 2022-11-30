@@ -1,64 +1,44 @@
 import pygame
-from game_data import levels
+from menu_items import Text, Button, Node
+from game_data import levels, menus
 
-class Text(pygame.sprite.Sprite):
-    def __init__(self, position, text, size=30, color=(255, 255, 255)):
-        super().__init__()
-        self.font = pygame.font.SysFont('Arial', size)
-        self.text = self.font.render(text, True, color)
-        self.size = self.text.get_size()
-        self.image = pygame.Surface(self.size, pygame.SRCALPHA)
-        self.rect = self.image.get_rect(center=position)
-        self.image.blit(self.text, (0, 0))
-
-class Button(pygame.sprite.Sprite):
-    def __init__(self, position, image, text, action=None, get_action=None, *args):
-        super().__init__()
-
-        self.action = action
-        self.args = args
+class Menu:
+    def __init__(self, surface, get_action, menu):
+        self.surface = surface
         self.get_action = get_action
-        self.call_action = get_action(action)
+        self.menu = menu
 
-        self.font = pygame.font.SysFont('Arial', 30)
-        self.text = self.font.render(text, True, (255, 255, 255))
-        self.size = self.text.get_size()
-        self.image = pygame.Surface(self.size)
-        self.rect = self.image.get_rect(center=position)
-        self.image.fill((0, 0, 0))
-        self.image.blit(self.text, (0, 0))
+        #Init
+        self.buttons = pygame.sprite.Group()
+        self.texts = pygame.sprite.Group()
 
-    def click(self):
-        if self.action:
-            if self.action == 'create_level':
-                selected_level = self.get_action('get_selected_level')()
-                self.call_action(selected_level, *self.args)
-            else:
-                self.call_action(*self.args)
+        #Setup
+        self.show_hidden = False
+        self.setup()
 
-class Node(pygame.sprite.Sprite):
-    def __init__(self, position, unlocked=False, speed=5, image=None):
-        super().__init__()
-        self.image = image if image else pygame.Surface((350, 250))
-        self.unlocked = unlocked
-        self.pos = position
-        self.speed = speed
-        self.target = None
+    def setup(self):
+        for pos,text,size in menus[self.menu]["texts"]:
+            self.texts.add(Text(pos, text, size))
 
-        if not unlocked:
-            self.image = pygame.image.load('assets/levels/level_banner_locked.png').convert_alpha()
-        self.rect = self.image.get_rect(center=position)
+        for pos,text,hidden,action in menus[self.menu]["buttons"]:
+            self.buttons.add(Button(pos, None, text, hidden, action, self.get_action))
+    
+    def input(self, clicks=None):
+        for click in clicks:
+            for button in self.buttons:
+                if button.rect.collidepoint(click):
+                    button.click()
 
+    def run(self, clicks=None):
+        self.input(clicks)
+        self.buttons.update(self.show_hidden)
+        #self.nodes.update()
+        #self.update()
 
-    def update(self):
-        self.rect.center = self.pos
-        if self.target:
-            if (self.target[0] - self.pos[0]) != 0:
-                dir = (self.target[0] - self.pos[0]) / abs((self.target[0] - self.pos[0]))
-                self.pos = (self.pos[0] + self.speed * dir, self.pos[1])
-                if (dir < 0 and self.pos[0] <= self.target[0]) or (dir > 0 and self.pos[0] >= self.target[0]):
-                    self.pos = self.target
-                    self.target = None
+        self.surface.fill((20, 20, 20))
+        self.buttons.draw(self.surface)
+        self.texts.draw(self.surface)
+
 class Overworld:
     def __init__(self, surface, start_level=1, max_level=2, speed= 10, level_method=None, get_action=None):
         self.surface = surface
@@ -78,9 +58,9 @@ class Overworld:
 
         #Buttons
         self.buttons = pygame.sprite.Group()
-        self.buttons.add(Button((625,625), None, "PLAY", "create_level", get_action, self.surface))
-        self.buttons.add(Button((625,675), None, "OPTIONS", "open_options", get_action))
-        self.buttons.add(Button((625,725), None, "BACK TO MAIN MENU", "to_main_menu", get_action))
+        self.buttons.add(Button((625,625), None, "PLAY", False, "create_level", get_action, self.surface))
+        self.buttons.add(Button((625,675), None, "OPTIONS", False, "to_options", get_action))
+        self.buttons.add(Button((625,725), None, "BACK TO MAIN MENU", False, "to_main_menu", get_action))
         
     def setup_nodes(self):
         self.nodes = pygame.sprite.Group()
