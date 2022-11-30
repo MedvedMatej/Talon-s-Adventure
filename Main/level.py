@@ -51,8 +51,6 @@ class Level:
         self.sprites['Bullet']
 
     def create_tile_group(self, layout, tile_type, animated=False):
-        sprite_group = pygame.sprite.Group()
-
         for row, tiles in enumerate(layout):
             for column, tile in enumerate(tiles):
                 if tile != '-1':
@@ -71,19 +69,21 @@ class Level:
                             sprite = TerrainTile((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface, 'Water')
                             self.sprites['Terrain'].add(sprite)
                         elif int(tile) in [4]:
-                            sprite = TerrainTile((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface, 'Spike')
+                            sprite = Spike((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface, 'Spike')
                             self.sprites['Terrain'].add(sprite)
                         elif int(tile) in [184,185, 186]:
                             sprite = PlatformTile((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface, (1,0))
                             self.sprites['Platforms'].add(sprite)
                         elif tile_type == 'Collectables':
-                            sprite = CollectableTile((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface)
-                            self.sprites['Collectables'].add(sprite)
+                            if int(tile) in [5]:
+                                sprite = CollectableTile((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface, type='portal')
+                                self.sprites['Collectables'].add(sprite)
+                            else:
+                                sprite = CollectableTile((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface)
+                                self.sprites['Collectables'].add(sprite)
                         else:
                             sprite = StaticTile((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface)
                             self.sprites[tile_type].add(sprite)
-
-        return sprite_group
 
     def scroll_x(self):
         player = self.player.sprite
@@ -192,12 +192,12 @@ class Level:
         
         if keys[pygame.K_ESCAPE]:
             self.get_action('to_options')(True)
-        if keys[pygame.K_p]:
-            self.create_overworld(self.surface,self.selected_level, self.selected_level+1)
+        """ if keys[pygame.K_p]:
+            self.create_overworld(self.surface,self.selected_level+1, self.selected_level+1) """
     
     def update(self):
         if self.win:
-            self.create_overworld(self.surface,self.selected_level, self.selected_level+1)
+            self.create_overworld(self.surface,self.selected_level+1, self.selected_level+1)
     
     def run(self):
         self.input()
@@ -214,6 +214,9 @@ class Level:
                     player.get_input(self.sprites)
                     self.vertical_collisions(player)
                     self.horizontal_collisions(player)
+
+                    if player.win:
+                        self.win = True
             if key == 'Bullet':
                 for bullet in group:
 

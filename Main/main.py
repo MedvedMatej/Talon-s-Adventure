@@ -1,7 +1,6 @@
 import pygame, sys
 from settings import *
 from level import Level
-from level_data import *
 from menus import Overworld, Menu
 
 class Game:

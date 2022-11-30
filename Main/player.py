@@ -20,6 +20,7 @@ class Player(AnimatedTile):
         self.on_effected_tile = False
         self.next_to_effected_tile = False
         self.effects = {}
+        self.win = False
 
         #Jumping
         self.on_ground = False

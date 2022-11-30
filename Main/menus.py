@@ -61,6 +61,16 @@ class Overworld:
         self.buttons.add(Button((625,625), None, "PLAY", False, "create_level", get_action, self.surface))
         self.buttons.add(Button((625,675), None, "OPTIONS", False, "to_options", get_action))
         self.buttons.add(Button((625,725), None, "BACK TO MAIN MENU", False, "to_main_menu", get_action))
+
+        #Start time
+        self.start_time = pygame.time.get_ticks()
+        self.allow_input = False
+        self.timer = 500
+
+    def input_timer(self):
+        if not self.allow_input:
+            if pygame.time.get_ticks() - self.start_time > self.timer:
+                self.allow_input = True
         
     def setup_nodes(self):
         self.nodes = pygame.sprite.Group()
@@ -77,16 +87,18 @@ class Overworld:
                 if button.rect.collidepoint(click):
                     button.click()
 
+            ##TODO: Check click on level nodes
+
         keys = pygame.key.get_pressed()
-        if not self.moving:
-            if keys[pygame.K_RIGHT]:
+        if not self.moving and self.allow_input:
+            if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
                 self.moving = True
                 if self.selected_level < len(levels.keys()):
                     self.shift = 1
                     self.direction = self.set_movement()
                     self.selected_level += 1
             
-            elif keys[pygame.K_LEFT]:
+            elif keys[pygame.K_LEFT] or keys[pygame.K_a]:
                 self.moving = True
                 if self.selected_level > 1:
                     self.shift = -1
@@ -106,6 +118,8 @@ class Overworld:
             if node.target:
                 running = True
         self.moving = running
+
+        self.input_timer()
 
     def run(self, clicks=None):
         self.input(clicks)

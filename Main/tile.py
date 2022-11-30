@@ -28,16 +28,28 @@ class TerrainTile(StaticTile):
         elif type == 'Spike':
             self.effects["damage"] = 1
 
+class Spike(TerrainTile):
+    def __init__(self, pos, size, image, type):
+        super().__init__(pos, size, image, type)
+        self.rect = self.image.get_rect(topleft= (pos[0], pos[1] + size/2))
+
 class CollectableTile(StaticTile):
-    def __init__(self, pos, size, image, respawnable=True):
+    def __init__(self, pos, size, image, respawnable=True, type='jump_boost'):
         super().__init__(pos, size, image)
+        self.type = type
         self.respawnable = respawnable
         self.active = True
-        self.respawn_time = 2
+        self.respawn_time = 1.5
         self.respawn_timer = 0
+        #Shift to middle of tile
+        self.rect = self.image.get_rect(center = (pos[0] + size, pos[1] + size))
 
     def effect(self, player):
-        player.available_jumps += 1
+        if self.type == 'jump_boost':
+            player.available_jumps += 1
+        elif self.type == 'portal':
+            print("Portal")
+            player.win = True
 
     def hide(self):
         self.image = pygame.Surface((self.rect.width, self.rect.height), pygame.SRCALPHA)
