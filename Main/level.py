@@ -71,12 +71,18 @@ class Level:
                         elif int(tile) in [4]:
                             sprite = Spike((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface, 'Spike')
                             self.sprites['Terrain'].add(sprite)
-                        elif int(tile) in [184,185, 186]:
+                        elif int(tile) in [184,185,186]:
                             sprite = PlatformTile((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface, (1,0))
+                            self.sprites['Platforms'].add(sprite)
+                        elif int(tile) in [187]:
+                            sprite = PlatformTile((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface, (0,1))
                             self.sprites['Platforms'].add(sprite)
                         elif tile_type == 'Collectables':
                             if int(tile) in [5]:
-                                sprite = CollectableTile((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface, type='portal')
+                                sprite = CollectableTile((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface, type='portal', despawn=False)
+                                self.sprites['Collectables'].add(sprite)
+                            elif int(tile) in [404]:
+                                sprite = CollectableTile((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface, type='key', respawnable=False)
                                 self.sprites['Collectables'].add(sprite)
                             else:
                                 sprite = CollectableTile((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface)
@@ -136,6 +142,10 @@ class Level:
                 sprite.collect()
                 if not sprite.respawnable:
                     self.sprites['Collectables'].remove(sprite)
+
+        for sprite in self.sprites['Enemy']:
+            if sprite.rect.colliderect(player.rect):
+                player.load_save()
     
     def vertical_collisions(self, player):
         player.apply_gravity()
@@ -172,6 +182,10 @@ class Level:
                     if sprite.direction.y > 0:
                         player.rect.y += sprite.direction.y * sprite.speed + 1
     
+        for sprite in self.sprites['Enemy']:
+            if sprite.rect.colliderect(player.rect):
+                player.load_save()
+
     def enemy_collisions(self):
         for enemy in self.sprites['Enemy']:
             #enemy.apply_gravity()

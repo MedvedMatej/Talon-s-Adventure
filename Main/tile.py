@@ -34,13 +34,14 @@ class Spike(TerrainTile):
         self.rect = self.image.get_rect(topleft= (pos[0], pos[1] + size/2))
 
 class CollectableTile(StaticTile):
-    def __init__(self, pos, size, image, respawnable=True, type='jump_boost'):
+    def __init__(self, pos, size, image, respawnable=True, type='jump_boost', despawn=True):
         super().__init__(pos, size, image)
         self.type = type
         self.respawnable = respawnable
         self.active = True
         self.respawn_time = 1.5
         self.respawn_timer = 0
+        self.despawn = despawn
         #Shift to middle of tile
         self.rect = self.image.get_rect(center = (pos[0] + size, pos[1] + size))
 
@@ -48,11 +49,17 @@ class CollectableTile(StaticTile):
         if self.type == 'jump_boost':
             player.available_jumps += 1
         elif self.type == 'portal':
-            print("Portal")
-            player.win = True
+            print(player.keys)
+            if player.keys > 2:
+                print("Portal")
+                player.win = True
+        elif self.type == 'key':
+            player.keys += 1
+            print("Keys: ", player.keys)
 
     def hide(self):
-        self.image = pygame.Surface((self.rect.width, self.rect.height), pygame.SRCALPHA)
+        if self.despawn:
+            self.image = pygame.Surface((self.rect.width, self.rect.height), pygame.SRCALPHA)
 
     def collect(self):
         self.respawn_timer = self.respawn_time

@@ -20,6 +20,7 @@ class Player(AnimatedTile):
         self.on_effected_tile = False
         self.next_to_effected_tile = False
         self.effects = {}
+        self.keys = 0
         self.win = False
 
         #Jumping
@@ -51,7 +52,7 @@ class Player(AnimatedTile):
 
     def save(self):
         for key,value in self.__dict__.items():
-            if key not in ['_Sprite__g', 'image', 'animations', 'reset_cooldown', 'saved_player', 'death_counter']:
+            if key not in ['_Sprite__g', 'image', 'animations', 'reset_cooldown', 'saved_player', 'death_counter', 'keys']:
                 self.saved_player[key] = copy.deepcopy(value)
         self.saved_player['reset_cooldown'] = True
             
