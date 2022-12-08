@@ -6,6 +6,8 @@ from imports import import_csv_layout, import_cut_graphics, import_folder
 from background import Background
 from player import Player
 from game_data import levels
+from menus import Menu
+
 class Level:
     def __init__(self, selected_level, surface, overworld_method=None, get_action=None):
         self.create_overworld = overworld_method
@@ -44,11 +46,19 @@ class Level:
         self.create_tile_group(self.constraints_layout, 'Constraints')
         #Animated
         self.create_tile_group(self.player_layout, 'Player', animated=True)
+        self.player = [x for x in self.sprites['Player']][0]
         self.create_tile_group(self.enemy_layout, 'Enemy', animated=True)
 
         self.world_shift = 0
 
         self.sprites['Bullet']
+
+        #Level timer
+        self.start_time = pygame.time.get_ticks()/1000
+
+        #UI overlay
+        self.ui_overlay = Menu(self.surface, self.get_action, 'ui_overlay', True)
+
 
     def create_tile_group(self, layout, tile_type, animated=False):
         for row, tiles in enumerate(layout):
@@ -145,7 +155,8 @@ class Level:
 
         for sprite in self.sprites['Enemy']:
             if sprite.rect.colliderect(player.rect):
-                player.load_save()
+                player.effects['damage'] = 1
+                #player.load_save()
     
     def vertical_collisions(self, player):
         player.apply_gravity()
@@ -184,7 +195,8 @@ class Level:
     
         for sprite in self.sprites['Enemy']:
             if sprite.rect.colliderect(player.rect):
-                player.load_save()
+                player.effects['damage'] = 1
+                #player.load_save()
 
     def enemy_collisions(self):
         for enemy in self.sprites['Enemy']:
@@ -206,12 +218,24 @@ class Level:
         
         if keys[pygame.K_ESCAPE]:
             self.get_action('to_options')(True)
-        """ if keys[pygame.K_p]:
-            self.create_overworld(self.surface,self.selected_level+1, self.selected_level+1) """
+        if keys[pygame.K_p]:
+            for text in self.ui_overlay.texts:
+                text.update('Paused')
     
     def update(self):
         if self.win:
             self.create_overworld(self.surface,self.selected_level+1, self.selected_level+1)
+
+        for text in self.ui_overlay.texts:
+            if text.id == 'keys':
+                text.update('Keys: {}'.format(self.player.keys))
+            elif text.id == 'deaths':
+                text.update('Deaths: {}'.format(self.player.death_counter))
+            elif text.id == 'timer':
+                seconds = (pygame.time.get_ticks()-self.start_time)//1000
+                minutes = seconds//60
+                seconds = seconds%60
+                text.update(f'Time: {str(int(minutes)).zfill(2)}:{str(int(seconds)).zfill(2)}')
     
     def run(self):
         self.input()
@@ -252,3 +276,5 @@ class Level:
         for key, group in self.sprites.items():
             if self.show_constraints or key != 'Constraints':
                 group.draw(self.surface)
+
+        self.ui_overlay.run()

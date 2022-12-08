@@ -32,8 +32,16 @@ op_buttons = [
     ((625, 650), "To Level Selection", False, 'to_overworld'),
 ]
 
+#UI overlay
+ui_texts = [
+    ((10, 10), "Time: 00:00", 20, (0,0,0), 'topleft', 'timer'),
+    ((10, 30), "Deaths: 0", 20, (0,0,0), 'topleft', 'deaths'),
+    ((10, 50), "Keys: 0", 20, (0,0,0), 'topleft', 'keys'),
+]
+
 #Menus
 menus = {
     'main_menu': {'texts': mm_texts, 'buttons': mm_buttons, 'background': ''},
     'options': {'texts': op_texts, 'buttons': op_buttons, 'background': ''},
+    'ui_overlay': {'texts': ui_texts, 'buttons': [], 'background': ''},
 }

@@ -1,7 +1,7 @@
 import pygame, sys
 from settings import *
 from level import Level
-from menus import Overworld, Menu
+from menus import Overworld, Menu, Button, Text
 
 class Game:
     def __init__(self):

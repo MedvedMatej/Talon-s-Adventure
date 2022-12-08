@@ -3,10 +3,11 @@ from menu_items import Text, Button, Node
 from game_data import levels, menus
 
 class Menu:
-    def __init__(self, surface, get_action, menu):
+    def __init__(self, surface, get_action, menu, transparent=False):
         self.surface = surface
         self.get_action = get_action
         self.menu = menu
+        self.transparent = transparent
 
         #Init
         self.buttons = pygame.sprite.Group()
@@ -17,13 +18,31 @@ class Menu:
         self.setup()
 
     def setup(self):
-        for pos,text,size in menus[self.menu]["texts"]:
-            self.texts.add(Text(pos, text, size))
+        for text in menus[self.menu]["texts"]:
+            if len(text) == 2:
+                pos, text = text
+                self.texts.add(Text(pos, text))
+            elif len(text) == 3:
+                pos, text, size = text
+                self.texts.add(Text(pos, text, size))
+            elif len(text) == 4:
+                pos, text, size, color = text
+                self.texts.add(Text(pos, text, size, color))
+            elif len(text) == 5:
+                pos, text, size, color, position_type = text
+                self.texts.add(Text(pos, text, size, color, position_type))
+            elif len(text) == 6:
+                pos, text, size, color, position_type, id = text
+                self.texts.add(Text(pos, text, size, color, position_type, id))
+            #self.texts.add(Text(pos, text, size, color))
 
         for pos,text,hidden,action in menus[self.menu]["buttons"]:
             self.buttons.add(Button(pos, None, text, hidden, action, self.get_action))
     
     def input(self, clicks=None):
+        if not clicks:
+            return
+
         for click in clicks:
             for button in self.buttons:
                 if button.rect.collidepoint(click):
@@ -35,7 +54,8 @@ class Menu:
         #self.nodes.update()
         #self.update()
 
-        self.surface.fill((20, 20, 20))
+        if not self.transparent:
+            self.surface.fill((20, 20, 20))
         self.buttons.draw(self.surface)
         self.texts.draw(self.surface)
 

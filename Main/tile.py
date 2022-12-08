@@ -49,13 +49,10 @@ class CollectableTile(StaticTile):
         if self.type == 'jump_boost':
             player.available_jumps += 1
         elif self.type == 'portal':
-            print(player.keys)
             if player.keys > 2:
-                print("Portal")
                 player.win = True
         elif self.type == 'key':
             player.keys += 1
-            print("Keys: ", player.keys)
 
     def hide(self):
         if self.despawn:

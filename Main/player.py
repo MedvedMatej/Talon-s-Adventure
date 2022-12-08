@@ -46,7 +46,6 @@ class Player(AnimatedTile):
         
         if 'damage' in self.effects:
             self.death_counter += 1
-            print("Number of deaths: ",self.death_counter)
             self.load_save()
         
 

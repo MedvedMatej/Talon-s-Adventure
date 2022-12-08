@@ -1,14 +1,31 @@
 import pygame
 
 class Text(pygame.sprite.Sprite):
-    def __init__(self, position, text, size=30, color=(255, 255, 255)):
+    def __init__(self, position, text, size=30, color=(255, 255, 255), position_type='center', id=None):
         super().__init__()
+        self.id = id
+        self.color = color
+        self.position_type = position_type
+        self.position = position
         self.font = pygame.font.SysFont('Arial', size)
         self.text = self.font.render(text, True, color)
         self.size = self.text.get_size()
         self.image = pygame.Surface(self.size, pygame.SRCALPHA)
-        self.rect = self.image.get_rect(center=position)
+
+        if self.position_type == 'topleft':
+            self.rect = self.image.get_rect(topleft=self.position)
+        else:
+            self.rect = self.image.get_rect(center=self.position)
+
         self.image.blit(self.text, (0, 0))
+
+    def update(self, text):
+        self.text = self.font.render(text, True, self.color)
+        self.size = self.text.get_size()
+        self.image = pygame.Surface(self.size, pygame.SRCALPHA)
+        #self.rect = self.image.get_rect(center=self.position)
+        self.image.blit(self.text, (0, 0))
+
 
 class Button(pygame.sprite.Sprite):
     def __init__(self, position, image, text, hidden=False, action=None, get_action=None, *args):
