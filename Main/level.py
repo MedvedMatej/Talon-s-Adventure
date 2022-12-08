@@ -122,7 +122,7 @@ class Level:
         player.rect.x += player.platform[0] * player.platform[2]
 
         for sprite in self.sprites['Terrain']:
-            if sprite.rect.colliderect(player.rect):
+            if sprite.rect.colliderect(player.rect) and pygame.sprite.collide_mask(player, sprite):
                 ##TODO: Check for bugs
                 if hasattr(sprite, 'effects'):
                     player.give_effects(sprite.effects)
@@ -131,9 +131,14 @@ class Level:
                     player.on_effected_tile = False
                     player.clear_effects()
                 if player.direction.x > 0:
-                    player.rect.right = sprite.rect.left
+                    
+                    while pygame.sprite.collide_mask(player, sprite):
+                        player.rect.x += -player.direction.x*player.speed*multiplier/5
+                    #player.rect.right = sprite.rect.left
                 elif player.direction.x < 0:
-                    player.rect.left = sprite.rect.right
+                    while pygame.sprite.collide_mask(player, sprite):
+                        player.rect.x += -player.direction.x*player.speed*multiplier/5
+                    #player.rect.left = sprite.rect.right
 
         for sprite in self.sprites['Platforms']:
             if sprite.rect.colliderect(player.rect):
@@ -153,10 +158,11 @@ class Level:
                 if not sprite.respawnable:
                     self.sprites['Collectables'].remove(sprite)
 
-        for sprite in self.sprites['Enemy']:
+        """ for sprite in self.sprites['Enemy']:
             if sprite.rect.colliderect(player.rect):
-                player.effects['damage'] = 1
-                #player.load_save()
+                player.effects['damage'] = 1 """
+        if pygame.sprite.spritecollide(player, self.sprites['Enemy'], False, pygame.sprite.collide_mask):
+            player.effects['damage'] = 1
     
     def vertical_collisions(self, player):
         player.apply_gravity()
@@ -164,7 +170,7 @@ class Level:
         player.rect.y += player.platform[1] * player.platform[2]
 
         for sprite in self.sprites['Terrain']:
-            if sprite.rect.colliderect(player.rect):
+            if sprite.rect.colliderect(player.rect) and pygame.sprite.collide_mask(sprite, player):
                 if hasattr(sprite, 'effects'):
                     player.give_effects(sprite.effects)
                     player.on_effected_tile = True
@@ -173,12 +179,17 @@ class Level:
                     player.clear_effects()
                 player.platform = (0,0,0)
                 if player.direction.y > 0:
-                    player.rect.bottom = sprite.rect.top
+                    #player.rect.bottom = sprite.rect.top
                     player.direction.y = 0
+                    while pygame.sprite.collide_mask(player, sprite):
+                        player.rect.y += -1
                     player.on_ground = True
                 elif player.direction.y < 0:
-                    player.rect.top = sprite.rect.bottom
                     player.direction.y = 0
+                    #player.rect.top = sprite.rect.bottom
+                    while pygame.sprite.collide_mask(player, sprite):
+                        player.rect.y += 1
+                        
 
         for sprite in self.sprites['Platforms']:
             if sprite.rect.colliderect(player.rect):
@@ -193,11 +204,10 @@ class Level:
                     if sprite.direction.y > 0:
                         player.rect.y += sprite.direction.y * sprite.speed + 1
     
-        for sprite in self.sprites['Enemy']:
+        """ for sprite in self.sprites['Enemy']:
             if sprite.rect.colliderect(player.rect):
                 player.effects['damage'] = 1
-                #player.load_save()
-
+        """
     def enemy_collisions(self):
         for enemy in self.sprites['Enemy']:
             #enemy.apply_gravity()

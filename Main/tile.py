@@ -15,6 +15,7 @@ class StaticTile(Tile):
         super().__init__(pos, size)
         self.image = image
         self.image_hidden = image
+        self.mask = pygame.mask.from_surface(self.image)
 
 class TerrainTile(StaticTile):
     def __init__(self, pos,size, image, type):
@@ -97,6 +98,7 @@ class AnimatedTile(Tile):
         self.selected_animation = 'idle' if 'idle' in self.animations.keys() else list(self.animations.keys())[0]
         self.index = 0
         self.image = self.animations[self.selected_animation][self.index]
+        self.mask = pygame.mask.from_surface(self.image)
 
     def set_animation(self, animation):
         if animation != self.selected_animation:
