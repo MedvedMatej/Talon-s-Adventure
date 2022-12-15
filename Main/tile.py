@@ -1,5 +1,6 @@
 import pygame
 from imports import import_folder, import_csv_layout, import_cut_graphics
+import math
 
 class Tile(pygame.sprite.Sprite):
     def __init__(self, pos, size):
@@ -113,7 +114,6 @@ class AnimatedTile(Tile):
         self.animate()
         self.rect.x += shift
 
-from random import randint
 class Enemy(AnimatedTile):
     def __init__(self, pos, size, path, speed=5):
         super().__init__(pos, size, path)
@@ -134,7 +134,7 @@ class Enemy(AnimatedTile):
     def reverse(self):
         self.direction.x = -self.direction.x
 
-    def update(self, shift):
+    def update(self, shift, player):
         self.rect.x += shift
         self.animate()
         self.move()
@@ -156,3 +156,79 @@ class Bullet(AnimatedTile):
         self.rect.x += shift
         self.animate()
         self.rect.x += self.direction.x * self.speed
+
+class FollowingEnemy(Enemy):
+    def __init__(self, pos, size, path, speed=5):
+        super().__init__(pos, size, path, speed)
+        self.following = False
+        self.default_speed = speed
+        self.barrier = False
+
+    def move(self):
+        if self.direction.x < 0:
+            self.image = pygame.transform.flip(self.image, True, False)
+        speed_boost = 4 if self.following else 1
+        self.rect.x += self.direction.x * self.speed * speed_boost
+        self.rect.y += self.direction.y * self.speed * speed_boost
+
+
+    def update(self, shift, player):
+        self.rect.x += shift
+        self.animate()
+        self.move()
+
+        if self.distance(player) < 200:
+            self.following = True
+            if self.direction.x < 0 and self.rect.x < player.rect.x:
+                self.direction.x = 0.2
+                self.barrier = False
+            elif self.direction.x > 0 and self.rect.x > player.rect.x:
+                self.direction.x = -0.2
+                self.barrier = False
+
+        else:
+            self.following = False
+        
+        if self.following and self.barrier:
+            self.speed = 0
+        else:
+            self.speed = self.default_speed
+            self.barrier = False
+
+    def distance(self, player):
+        return math.sqrt((self.rect.x - player.rect.x)**2 + (self.rect.y - player.rect.y)**2)
+
+class ShootingEnemy(Enemy):
+    def __init__(self, pos, size, path, speed=5, screen=None):
+        super().__init__(pos, size, path, speed)
+        self.shoot_timer = 0
+        self.shoot_time = 0.5
+        self.bullets = []
+        self.screen = screen
+
+    def shoot(self, player):
+        if self.direction.x < 0:
+            bullet = Bullet((self.rect.x - 10, self.rect.y + 30), 10, './assets/bullet/', 1, -1)
+        else:
+            bullet = Bullet((self.rect.x + 50, self.rect.y + 30), 10, './assets/bullet/', 1, 1)
+        self.bullets.append(bullet)
+
+    def update(self, shift, player):
+        self.rect.x += shift
+        self.animate()
+        self.move()
+        if self.player_in_range(player):
+            self.shoot_timer -= 1/60
+            if self.shoot_timer <= 0:
+                #self.shoot_timer = 1
+                self.shoot(player)
+                self.shoot_timer = self.shoot_time
+
+    def return_bullets(self):
+        return self.bullets
+
+    def clear_bullets(self):
+        self.bullets = []
+
+    def player_in_range(self, player):
+        return math.sqrt((self.rect.x - player.rect.x)**2 + (self.rect.y - player.rect.y)**2) < 250

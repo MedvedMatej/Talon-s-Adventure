@@ -67,9 +67,17 @@ class Level:
                     if animated:
                         if tile_type == 'Player':
                             sprite = Player((column*tile_size*4*global_scale, row*tile_size*4*global_scale), tile_size*self.sprites_scale[tile_type]*global_scale, f'./assets/{tile_type.lower()}/')
+                            self.sprites[tile_type].add(sprite)
                         elif tile_type == 'Enemy':
-                            sprite = Enemy((column*tile_size*4*global_scale, row*tile_size*4*global_scale), tile_size*self.sprites_scale[tile_type]*global_scale, f'./assets/{tile_type.lower()}/')
-                        self.sprites[tile_type].add(sprite)
+                            if int(tile) == 0:
+                                sprite = Enemy((column*tile_size*4*global_scale, row*tile_size*4*global_scale), tile_size*self.sprites_scale[tile_type]*global_scale, f'./assets/{tile_type.lower()}/')
+                                self.sprites[tile_type].add(sprite)
+                            elif int(tile) == 1:
+                                sprite = FollowingEnemy((column*tile_size*4*global_scale, row*tile_size*4*global_scale), tile_size*self.sprites_scale[tile_type]*global_scale, f'./assets/{tile_type.lower()}/')
+                                self.sprites[tile_type].add(sprite)
+                            elif int(tile) == 2:
+                                sprite = ShootingEnemy((column*tile_size*4*global_scale, row*tile_size*4*global_scale), tile_size*self.sprites_scale[tile_type]*global_scale, f'./assets/{tile_type.lower()}/')
+                                self.sprites[tile_type].add(sprite)
                     else:
                         tile_surface = self.sprites_graphics[tile_type][int(tile)]
                         if int(tile) == -2:
@@ -102,7 +110,7 @@ class Level:
                             self.sprites[tile_type].add(sprite)
 
     def scroll_x(self):
-        player = self.player.sprite
+        player = self.player
         player_x = player.rect.centerx
         direction_x = player.direction.x
 
@@ -202,8 +210,18 @@ class Level:
         for enemy in self.sprites['Enemy']:
             #enemy.apply_gravity()
             #enemy.rect.y += enemy.direction.y * enemy.speed
-            if pygame.sprite.spritecollide(enemy, self.sprites['Constraints'], False):
-                enemy.reverse()
+            sprite = pygame.sprite.spritecollide(enemy, self.sprites['Constraints'], False)
+            if sprite:
+                sprite = sprite[0]
+                if enemy.direction.x > 0:
+                    enemy.rect.right = sprite.rect.left
+                elif enemy.direction.x < 0:
+                    enemy.rect.left = sprite.rect.right
+
+                if hasattr(enemy, 'following') and enemy.following:
+                    enemy.barrier = True
+                else:
+                    enemy.reverse()
                 enemy.direction.y = 0
 
     def platform_collisions(self):
@@ -236,6 +254,12 @@ class Level:
                 minutes = seconds//60
                 seconds = seconds%60
                 text.update(f'Time: {str(int(minutes)).zfill(2)}:{str(int(seconds)).zfill(2)}')
+
+        for enemy in self.sprites['Enemy']:
+            if hasattr(enemy, 'bullets') and enemy.bullets:
+                for bullet in  enemy.return_bullets():
+                    self.sprites['Bullet'].add(bullet)
+                enemy.clear_bullets()
     
     def run(self):
         self.input()
@@ -243,9 +267,11 @@ class Level:
         #Update
         self.update()
         for key, group in self.sprites.items():
-            group.update(self.world_shift)
             if key == 'Enemy':
+                group.update(self.world_shift, self.player)
                 self.enemy_collisions()
+            else:
+                group.update(self.world_shift)
             if key == 'Player':
                 #self.scroll_x()
                 for player in group:
