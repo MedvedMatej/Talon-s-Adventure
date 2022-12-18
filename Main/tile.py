@@ -147,10 +147,10 @@ class SaveBlock(AnimatedTile):
         player.save()
 
 class Bullet(AnimatedTile):
-    def __init__(self, pos, size, path, scale=4, direction=1):
+    def __init__(self, pos, size, path, scale=4, direction=1, speed=10):
         super().__init__(pos, size, path, scale)
         self.direction = pygame.math.Vector2(direction, 0)
-        self.speed = 10
+        self.speed = speed
 
     def update(self, shift):
         self.rect.x += shift
@@ -208,9 +208,9 @@ class ShootingEnemy(Enemy):
 
     def shoot(self, player):
         if self.direction.x < 0:
-            bullet = Bullet((self.rect.x - 10, self.rect.y + 30), 10, './assets/bullet/', 1, -1)
+            bullet = Bullet((self.rect.x - 10, self.rect.y + 30), 10, './assets/bullet/', 1, -1,5)
         else:
-            bullet = Bullet((self.rect.x + 50, self.rect.y + 30), 10, './assets/bullet/', 1, 1)
+            bullet = Bullet((self.rect.x + 50, self.rect.y + 30), 10, './assets/bullet/', 1, 1,5)
         self.bullets.append(bullet)
 
     def update(self, shift, player):
@@ -231,4 +231,4 @@ class ShootingEnemy(Enemy):
         self.bullets = []
 
     def player_in_range(self, player):
-        return math.sqrt((self.rect.x - player.rect.x)**2 + (self.rect.y - player.rect.y)**2) < 250
+        return ((player.rect.x < self.rect.x and self.direction.x < 0) or (player.rect.x > self.rect.x and self.direction.x > 0)) and abs(player.rect.y - self.rect.y) < 50 and abs(player.rect.x - self.rect.x) < 250

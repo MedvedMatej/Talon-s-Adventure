@@ -52,6 +52,7 @@ class Level:
         self.world_shift = 0
 
         self.sprites['Bullet']
+        self.sprites['EnemyBullets']
 
         #Level timer
         self.start_time = pygame.time.get_ticks()/1000
@@ -258,7 +259,7 @@ class Level:
         for enemy in self.sprites['Enemy']:
             if hasattr(enemy, 'bullets') and enemy.bullets:
                 for bullet in  enemy.return_bullets():
-                    self.sprites['Bullet'].add(bullet)
+                    self.sprites['EnemyBullets'].add(bullet)
                 enemy.clear_bullets()
     
     def run(self):
@@ -292,6 +293,15 @@ class Level:
                                 entity.effect(player)
                         group.remove(bullet)
                     ##TODO: extend range?
+                    if bullet.rect.x > screen_width or bullet.rect.x < 0:
+                        group.remove(bullet)
+            if key == 'EnemyBullets':
+                for bullet in group:
+                    if pygame.sprite.spritecollide(bullet, self.sprites['Player'], False):
+                        group.remove(bullet)
+                        self.player.effects['damage'] = 1
+                    if pygame.sprite.spritecollide(bullet, self.sprites['Terrain'], False):
+                        group.remove(bullet)
                     if bullet.rect.x > screen_width or bullet.rect.x < 0:
                         group.remove(bullet)
             if key == 'Platforms':
