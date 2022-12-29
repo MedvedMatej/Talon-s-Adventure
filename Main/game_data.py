@@ -39,9 +39,20 @@ ui_texts = [
     ((10, 50), "Keys: 0", 20, (0,0,0), 'topleft', 'keys'),
 ]
 
+#Name input
+ni_texts = [
+    ((625, 75), "Enter your name", 40),
+]
+
+ni_buttons = [
+    ((625, 650), "Back To Main Menu", False, 'to_main_menu'),
+    ((625, 600), "Play", False, 'to_overworld'),
+]
+
 #Menus
 menus = {
     'main_menu': {'texts': mm_texts, 'buttons': mm_buttons, 'background': ''},
     'options': {'texts': op_texts, 'buttons': op_buttons, 'background': ''},
     'ui_overlay': {'texts': ui_texts, 'buttons': [], 'background': ''},
+    'name_input': {'texts': ni_texts, 'buttons': ni_buttons, 'background': ''},
 }

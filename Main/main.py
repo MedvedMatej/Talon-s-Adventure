@@ -1,7 +1,7 @@
 import pygame, sys
 from settings import *
 from level import Level
-from menus import Overworld, Menu, Button, Text
+from menus import Overworld, Menu, Button, Text, InputMenu
 
 class Game:
     def __init__(self):
@@ -14,6 +14,8 @@ class Game:
         self.overworld = Overworld(screen, self.selected_level, self.max_level, level_method = self.create_level, get_action = self.get_action)
         self.main_menu = Menu(screen, self.get_action, 'main_menu')
         self.options = Menu(screen, self.get_action, 'options')
+        self.name_input = InputMenu(screen, self.get_action, 'name_input')
+        self.input_text = ""
         
         self.status = 'main_menu'
         
@@ -49,13 +51,18 @@ class Game:
         self.status = 'main_menu'
     
     def to_overworld(self):
-        self.status = 'overworld'
+        if self.input_text:
+            self.status = 'overworld'
+        else:
+            self.status = 'name_input'
 
     def to_level(self):
         self.status = 'level'
 
     def run(self):
-        if self.status == 'main_menu':
+        if self.status == 'name_input':
+            self.name_input.run(self.clicks, self.input_text)
+        elif self.status == 'main_menu':
             self.main_menu.run(self.clicks)
         elif self.status == 'options':
             self.options.run(self.clicks)
@@ -80,6 +87,12 @@ while True:
             if event.button == 1:
                 mouse_pos = pygame.mouse.get_pos()
                 game.clicks.append(mouse_pos)
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_BACKSPACE:
+                game.input_text = game.input_text[:-1]
+            elif len(game.input_text) < 16:
+                game.input_text += event.unicode
+            
     
     game.run()
 

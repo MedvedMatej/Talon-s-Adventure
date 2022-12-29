@@ -55,7 +55,8 @@ class Level:
         self.sprites['EnemyBullets']
 
         #Level timer
-        self.start_time = pygame.time.get_ticks()/1000
+        self.start_time = pygame.time.get_ticks()
+        print(self.start_time)
 
         #UI overlay
         self.ui_overlay = Menu(self.surface, self.get_action, 'ui_overlay', True)
@@ -251,7 +252,7 @@ class Level:
             elif text.id == 'deaths':
                 text.update('Deaths: {}'.format(self.player.death_counter))
             elif text.id == 'timer':
-                seconds = (pygame.time.get_ticks()-self.start_time)//1000
+                seconds = (pygame.time.get_ticks() - self.start_time)/1000
                 minutes = seconds//60
                 seconds = seconds%60
                 text.update(f'Time: {str(int(minutes)).zfill(2)}:{str(int(seconds)).zfill(2)}')

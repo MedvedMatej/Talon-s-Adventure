@@ -59,6 +59,29 @@ class Menu:
         self.buttons.draw(self.surface)
         self.texts.draw(self.surface)
 
+class InputMenu(Menu):
+    def __init__(self, surface, get_action, menu, transparent=False):
+        super().__init__(surface, get_action, menu, transparent)
+        self.input_text = ""
+        self.input_field = Text((355, 300), self.input_text, 50, (255, 255, 255), 'topleft', "input_field")
+        self.texts.add(self.input_field)
+
+        self.input_rect = pygame.Rect(350, 300, 550, 62)
+        self.rect_color = (255, 255, 255)
+
+    def run(self, clicks = None, text = None):
+        self.input_field.update(text)
+        self.input(clicks)
+        self.buttons.update(self.show_hidden)
+        #self.nodes.update()
+        #self.update()
+
+        if not self.transparent:
+            self.surface.fill((20, 20, 20))
+        pygame.draw.rect(self.surface, self.rect_color, self.input_rect, 2)
+        self.buttons.draw(self.surface)
+        self.texts.draw(self.surface)
+
 class Overworld:
     def __init__(self, surface, start_level=1, max_level=2, speed= 10, level_method=None, get_action=None):
         self.surface = surface
