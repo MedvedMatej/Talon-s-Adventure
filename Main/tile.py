@@ -151,6 +151,9 @@ class Bullet(AnimatedTile):
         super().__init__(pos, size, path, scale)
         self.direction = pygame.math.Vector2(direction, 0)
         self.speed = speed
+        bullet_sound =  pygame.mixer.Sound('./assets/audio/effects/hit.wav')
+
+        bullet_sound.play()
 
     def update(self, shift):
         self.rect.x += shift

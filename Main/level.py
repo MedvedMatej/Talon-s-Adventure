@@ -21,6 +21,11 @@ class Level:
         self.selected_level = selected_level
         self.win = False
 
+        #audio
+        self.collect_sound = pygame.mixer.Sound('./assets/audio/effects/coin.wav')
+        self.hit_sound = pygame.mixer.Sound('./assets/audio/effects/hit.wav')
+        self.jump_sound = pygame.mixer.Sound('./assets/audio/effects/jump.wav')
+
         #Set world layout and scale
         self.terrain_layout = import_csv_layout(level_data['Terrain'])
         self.decoration_layout = import_csv_layout(level_data['Decorations'])
@@ -160,6 +165,9 @@ class Level:
             if sprite.rect.colliderect(player.rect) and sprite.active:
                 sprite.effect(player)
                 sprite.collect()
+                #play collect sound for key
+                self.collect_sound.play()
+
                 if not sprite.respawnable:
                     self.sprites['Collectables'].remove(sprite)
 
