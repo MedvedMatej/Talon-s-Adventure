@@ -56,8 +56,6 @@ class Game:
         for text in self.options.texts:
             if text.id == 'sfx_volume':
                 text.update(str(round(volume*100)))
-                print("sfx")
-                print(self.sfx_volume)
 
     def set_music_volume(self, volume):
         self.music.set_volume(volume)

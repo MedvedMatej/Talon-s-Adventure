@@ -82,7 +82,7 @@ class Level:
                                 sprite = FollowingEnemy((column*tile_size*4*global_scale, row*tile_size*4*global_scale), tile_size*self.sprites_scale[tile_type]*global_scale, f'./assets/{tile_type.lower()}/')
                                 self.sprites[tile_type].add(sprite)
                             elif int(tile) == 2:
-                                sprite = ShootingEnemy((column*tile_size*4*global_scale, row*tile_size*4*global_scale), tile_size*self.sprites_scale[tile_type]*global_scale, f'./assets/{tile_type.lower()}/', self.sounds)
+                                sprite = ShootingEnemy((column*tile_size*4*global_scale, row*tile_size*4*global_scale), tile_size*self.sprites_scale[tile_type]*global_scale, f'./assets/{tile_type.lower()}/', sounds=self.sounds)
                                 self.sprites[tile_type].add(sprite)
                     else:
                         tile_surface = self.sprites_graphics[tile_type][int(tile)]

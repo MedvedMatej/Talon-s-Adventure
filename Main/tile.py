@@ -121,7 +121,6 @@ class Enemy(AnimatedTile):
         self.speed = speed
 
     def move(self):
-        return
         if self.direction.x < 0:
             self.image = pygame.transform.flip(self.image, True, False)
         self.rect.x += self.direction.x * self.speed
