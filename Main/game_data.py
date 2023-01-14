@@ -10,7 +10,7 @@ levels = {
 
 #Main Menu
 mm_texts = [
-    ((625, 125), "Talon's Adventure", 100, (0,0,0)),
+    ((625, 125), "Talon's Adventure", 100, (255,255,255)),
 ]
 
 mm_buttons = [
@@ -51,7 +51,7 @@ ni_buttons = [
 
 #Menus
 menus = {
-    'main_menu': {'texts': mm_texts, 'buttons': mm_buttons, 'background': './assets/background/background2.png'},
+    'main_menu': {'texts': mm_texts, 'buttons': mm_buttons, 'background': ''}, #./assets/background/background2.png
     'options': {'texts': op_texts, 'buttons': op_buttons, 'background': ''},
     'ui_overlay': {'texts': ui_texts, 'buttons': [], 'background': ''},
     'name_input': {'texts': ni_texts, 'buttons': ni_buttons, 'background': ''},

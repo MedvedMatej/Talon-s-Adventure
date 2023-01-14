@@ -94,7 +94,8 @@ while True:
                 if event.key == pygame.K_BACKSPACE:
                     game.input_text = game.input_text[:-1]
                 elif event.key == pygame.K_RETURN:
-                    game.create_overworld(screen, game.selected_level, game.max_level)
+                    if len(game.input_text) >= 3:
+                        game.create_overworld(screen, game.selected_level, game.max_level)
                 elif len(game.input_text) < 16:
                     game.input_text += event.unicode
             

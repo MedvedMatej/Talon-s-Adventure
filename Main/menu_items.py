@@ -49,7 +49,14 @@ class Button(pygame.sprite.Sprite):
         self.hidden = hidden
         self.show_hidden = False
     
-    def update(self, show_hidden=False):
+    def update(self, show_hidden=False, mouse_pos=None):
+        if len(mouse_pos) == 2 and self.rect.collidepoint(mouse_pos):
+            self.image.fill((50, 50, 50))
+            self.image.blit(self.text, (0, 0))
+        else:
+            self.image.fill((0, 0, 0))
+            self.image.blit(self.text, (0, 0))
+
         self.show_hidden = show_hidden
         if self.hidden and not show_hidden:
             self.image = pygame.Surface(self.size, pygame.SRCALPHA)

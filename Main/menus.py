@@ -13,6 +13,7 @@ class Menu:
         #Init
         self.buttons = pygame.sprite.Group()
         self.texts = pygame.sprite.Group()
+        self.background = None
 
         #Setup
         self.show_hidden = False
@@ -56,7 +57,7 @@ class Menu:
 
     def run(self, clicks=None):
         self.input(clicks)
-        self.buttons.update(self.show_hidden)
+        self.buttons.update(self.show_hidden, pygame.mouse.get_pos())
         #self.nodes.update()
         #self.update()
 
@@ -80,7 +81,7 @@ class InputMenu(Menu):
     def run(self, clicks = None, text = None):
         self.input_field.update(text)
         self.input(clicks)
-        self.buttons.update(self.show_hidden)
+        self.buttons.update(self.show_hidden, pygame.mouse.get_pos())
         #self.nodes.update()
         #self.update()
 
@@ -176,6 +177,7 @@ class Overworld:
     def run(self, clicks=None):
         self.input(clicks)
         self.nodes.update()
+        self.buttons.update(mouse_pos = pygame.mouse.get_pos())
         self.update()
 
         self.surface.fill((20, 20, 20))
