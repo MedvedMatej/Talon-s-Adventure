@@ -22,9 +22,9 @@ class Level:
         self.win = False
 
         #audio
-        self.collect_sound = pygame.mixer.Sound('./assets/audio/effects/coin.wav')
-        self.hit_sound = pygame.mixer.Sound('./assets/audio/effects/hit.wav')
-        self.jump_sound = pygame.mixer.Sound('./assets/audio/effects/jump.wav')
+        self.sounds = get_action('get_sounds')()
+        self.collect_sound = self.sounds['coin']
+        #pygame.mixer.Sound('./assets/audio/effects/coin.wav')
 
         #Set world layout and scale
         self.terrain_layout = import_csv_layout(level_data['Terrain'])
@@ -72,7 +72,7 @@ class Level:
                 if tile != '-1':
                     if animated:
                         if tile_type == 'Player':
-                            sprite = Player((column*tile_size*4*global_scale, row*tile_size*4*global_scale), tile_size*self.sprites_scale[tile_type]*global_scale, f'./assets/{tile_type.lower()}/')
+                            sprite = Player((column*tile_size*4*global_scale, row*tile_size*4*global_scale), tile_size*self.sprites_scale[tile_type]*global_scale, f'./assets/{tile_type.lower()}/', self.sounds)
                             self.sprites[tile_type].add(sprite)
                         elif tile_type == 'Enemy':
                             if int(tile) == 0:
@@ -82,7 +82,7 @@ class Level:
                                 sprite = FollowingEnemy((column*tile_size*4*global_scale, row*tile_size*4*global_scale), tile_size*self.sprites_scale[tile_type]*global_scale, f'./assets/{tile_type.lower()}/')
                                 self.sprites[tile_type].add(sprite)
                             elif int(tile) == 2:
-                                sprite = ShootingEnemy((column*tile_size*4*global_scale, row*tile_size*4*global_scale), tile_size*self.sprites_scale[tile_type]*global_scale, f'./assets/{tile_type.lower()}/')
+                                sprite = ShootingEnemy((column*tile_size*4*global_scale, row*tile_size*4*global_scale), tile_size*self.sprites_scale[tile_type]*global_scale, f'./assets/{tile_type.lower()}/', self.sounds)
                                 self.sprites[tile_type].add(sprite)
                     else:
                         tile_surface = self.sprites_graphics[tile_type][int(tile)]

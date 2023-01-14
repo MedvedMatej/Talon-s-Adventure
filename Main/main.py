@@ -9,6 +9,10 @@ class Game:
         self.max_level = 2
         self.selected_level = 1
 
+        #Audio
+        self.sounds = {}
+        self.set_sounds()
+
         #Setup states
         self.level = None
         self.overworld = Overworld(screen, self.selected_level, self.max_level, level_method = self.create_level, get_action = self.get_action)
@@ -22,6 +26,18 @@ class Game:
         #Event data
         self.clicks = []
 
+    def set_sounds(self):
+        self.sounds['hit'] = pygame.mixer.Sound('./assets/audio/effects/hit.wav')
+        self.sounds['jump'] = pygame.mixer.Sound('./assets/audio/effects/jump.wav')
+        self.sounds['coin'] = pygame.mixer.Sound('./assets/audio/effects/coin.wav')
+
+    def get_sounds(self):
+        return self.sounds
+
+    def set_sound_volume(self, volume):
+        for sound in self.sounds.values():
+            sound.set_volume(volume)
+    
     def create_level(self, level, surface):
         self.selected_level = level
         self.level = Level(level, surface, self.create_overworld, self.get_action)
@@ -99,8 +115,6 @@ while True:
                 elif len(game.input_text) < 16:
                     game.input_text += event.unicode
             
-    
     game.run()
-
     pygame.display.update()
     clock.tick(60)

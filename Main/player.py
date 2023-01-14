@@ -3,10 +3,9 @@ from tile import AnimatedTile, Bullet
 import copy
 
 class Player(AnimatedTile):
-    def __init__(self, pos, size, path):
+    def __init__(self, pos, size, path, sounds):
         super().__init__(pos, size, path)
-        self.jump_sound = pygame.mixer.Sound('./assets/audio/effects/jump.wav')
-
+        self.sounds = sounds
         self.death_counter = 0
 
         #General movement
@@ -53,7 +52,7 @@ class Player(AnimatedTile):
 
     def save(self):
         for key,value in self.__dict__.items():
-            if key not in ['_Sprite__g', 'image', 'animations', 'reset_cooldown', 'saved_player', 'death_counter', 'keys', 'jump_sound']:
+            if key not in ['_Sprite__g', 'image', 'animations', 'reset_cooldown', 'saved_player', 'death_counter', 'keys', 'sounds']:
                 self.saved_player[key] = copy.deepcopy(value)
         self.saved_player['reset_cooldown'] = True
             
@@ -75,7 +74,7 @@ class Player(AnimatedTile):
     def jump(self):
 
         if self.available_jumps > 0:
-            self.jump_sound.play()
+            self.sounds['jump'].play()
             self.direction.y = self.jump_speed if not 'jump_multiplier' in self.effects else self.jump_speed*self.effects['jump_multiplier']
             self.on_ground = False
             self.platform = (0,0,0)
@@ -109,7 +108,7 @@ class Player(AnimatedTile):
         
         if keys[pygame.K_SPACE]:
             if not self.shoot_cooldown:
-                sprites['Bullet'].add(Bullet((self.rect.centerx, self.rect.centery), 1, './assets/bullet/',1, -1 if self.flipped else 1))
+                sprites['Bullet'].add(Bullet((self.rect.centerx, self.rect.centery), 1, './assets/bullet/',1, -1 if self.flipped else 1, sounds=self.sounds))
                 self.shoot_cooldown = True
         else:
             self.shoot_cooldown = False

@@ -121,6 +121,7 @@ class Enemy(AnimatedTile):
         self.speed = speed
 
     def move(self):
+        return
         if self.direction.x < 0:
             self.image = pygame.transform.flip(self.image, True, False)
         self.rect.x += self.direction.x * self.speed
@@ -147,13 +148,13 @@ class SaveBlock(AnimatedTile):
         player.save()
 
 class Bullet(AnimatedTile):
-    def __init__(self, pos, size, path, scale=4, direction=1, speed=10):
+    def __init__(self, pos, size, path, scale=4, direction=1, speed=10, sounds=None):
         super().__init__(pos, size, path, scale)
         self.direction = pygame.math.Vector2(direction, 0)
         self.speed = speed
-        bullet_sound =  pygame.mixer.Sound('./assets/audio/effects/hit.wav')
-
-        bullet_sound.play()
+        sounds['hit'].play()
+        #bullet_sound =  pygame.mixer.Sound('./assets/audio/effects/hit.wav')
+        #bullet_sound.play()
 
     def update(self, shift):
         self.rect.x += shift
@@ -202,18 +203,19 @@ class FollowingEnemy(Enemy):
         return math.sqrt((self.rect.x - player.rect.x)**2 + (self.rect.y - player.rect.y)**2)
 
 class ShootingEnemy(Enemy):
-    def __init__(self, pos, size, path, speed=5, screen=None):
+    def __init__(self, pos, size, path, speed=5, screen=None, sounds=None):
         super().__init__(pos, size, path, speed)
         self.shoot_timer = 0
         self.shoot_time = 0.5
         self.bullets = []
         self.screen = screen
+        self.sounds = sounds
 
     def shoot(self, player):
         if self.direction.x < 0:
-            bullet = Bullet((self.rect.x - 10, self.rect.y + 30), 10, './assets/bullet/', 1, -1,5)
+            bullet = Bullet((self.rect.x - 10, self.rect.y + 30), 10, './assets/bullet/', 1, -1,5, self.sounds)
         else:
-            bullet = Bullet((self.rect.x + 50, self.rect.y + 30), 10, './assets/bullet/', 1, 1,5)
+            bullet = Bullet((self.rect.x + 50, self.rect.y + 30), 10, './assets/bullet/', 1, 1,5, self.sounds)
         self.bullets.append(bullet)
 
     def update(self, shift, player):

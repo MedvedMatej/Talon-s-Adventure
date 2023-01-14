@@ -120,7 +120,6 @@ class Overworld:
         self.timer = 500
 
     def input_timer(self):
-        print(self.start_time, pygame.time.get_ticks())
         if not self.allow_input:
             if pygame.time.get_ticks() - self.start_time > self.timer:
                 self.allow_input = True
