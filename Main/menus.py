@@ -21,7 +21,7 @@ class Menu:
 
     def setup(self):
         for text in menus[self.menu]["texts"]:
-            if len(text) == 2:
+            """ if len(text) == 2:
                 pos, text = text
                 self.texts.add(Text(pos, text))
             elif len(text) == 3:
@@ -35,11 +35,14 @@ class Menu:
                 self.texts.add(Text(pos, text, size, color, position_type))
             elif len(text) == 6:
                 pos, text, size, color, position_type, id = text
-                self.texts.add(Text(pos, text, size, color, position_type, id))
+                self.texts.add(Text(pos, text, size, color, position_type, id)) """
             #self.texts.add(Text(pos, text, size, color))
+            self.texts.add(text)
 
-        for pos,text,hidden,action in menus[self.menu]["buttons"]:
-            self.buttons.add(Button(pos, None, text, hidden, action, self.get_action))
+        for button in menus[self.menu]["buttons"]:
+            #self.buttons.add(Button(pos, None, text, hidden, action, self.get_action))
+            button.set_action(self.get_action)
+            self.buttons.add(button)
 
         if menus[self.menu]["background"]:
             self.background = Background([menus[self.menu]["background"]],self.surface)

@@ -3,6 +3,8 @@ from settings import *
 from level import Level
 from menus import Overworld, Menu, Button, Text, InputMenu
 
+import json
+
 class Game:
     def __init__(self):
         #Starting values
@@ -11,7 +13,9 @@ class Game:
 
         #Audio
         self.sounds = {}
+        self.music = None
         self.set_sounds()
+        self.music.play(loops=-1)
 
         #Setup states
         self.level = None
@@ -26,10 +30,19 @@ class Game:
         #Event data
         self.clicks = []
 
+        #settings
+        self.sfx_volume = 1
+        self.music_volume = 1
+        self.controls = {}
+        self.load_settings()
+        self.apply_settings()
+
     def set_sounds(self):
         self.sounds['hit'] = pygame.mixer.Sound('./assets/audio/effects/hit.wav')
         self.sounds['jump'] = pygame.mixer.Sound('./assets/audio/effects/jump.wav')
         self.sounds['coin'] = pygame.mixer.Sound('./assets/audio/effects/coin.wav')
+
+        self.music = pygame.mixer.Sound('./assets/audio/ambient_music.wav')
 
     def get_sounds(self):
         return self.sounds
@@ -37,6 +50,86 @@ class Game:
     def set_sound_volume(self, volume):
         for sound in self.sounds.values():
             sound.set_volume(volume)
+        self.save_settings()
+
+        #Update label
+        for text in self.options.texts:
+            if text.id == 'sfx_volume':
+                text.update(str(round(volume*100)))
+                print("sfx")
+                print(self.sfx_volume)
+
+    def set_music_volume(self, volume):
+        self.music.set_volume(volume)
+        self.save_settings()
+
+        #Update label
+        for text in self.options.texts:
+            if text.id == 'music_volume':
+                text.update(str(round(volume*100)))
+
+    def music_down(self):
+        self.music_volume -= 0.05
+
+        if self.music_volume < 0:
+            self.music_volume = 0
+
+        self.set_music_volume(self.music_volume)
+
+    def music_up(self):
+        self.music_volume += 0.05
+
+        if self.music_volume > 1:
+            self.music_volume = 1
+
+        self.set_music_volume(self.music_volume)
+
+    def sfx_down(self):
+        self.sfx_volume -= 0.05
+
+        if self.sfx_volume < 0:
+            self.sfx_volume = 0
+
+        self.set_sound_volume(self.sfx_volume)
+
+    def sfx_up(self):
+        self.sfx_volume += 0.05
+        
+        if self.sfx_volume > 1:
+            self.sfx_volume = 1
+
+        self.set_sound_volume(self.sfx_volume)
+
+
+    def load_settings(self):
+        with open('settings.json', 'r') as f:
+            data = json.load(f)
+        if 'sfx_volume' in data:
+            self.sfx_volume = data['sfx_volume']
+        
+        if 'music_volume' in data:
+            self.music_volume = data['music_volume']
+
+        if 'controls' in data:
+            self.controls = data['controls']
+
+    def save_settings(self):
+        data = {
+            'sfx_volume': self.sfx_volume,
+            'music_volume': self.music_volume,
+            'controls': self.controls
+        }
+        with open('settings.json', 'w') as f:
+            json.dump(data, f)
+
+    def apply_settings(self):
+        self.set_sound_volume(self.sfx_volume)
+        self.set_music_volume(self.music_volume)
+        self.set_controls(self.controls)
+    
+    def set_controls(self, controls):
+        #TODO
+        pass
     
     def create_level(self, level, surface):
         self.selected_level = level

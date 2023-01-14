@@ -28,13 +28,18 @@ class Text(pygame.sprite.Sprite):
 
 
 class Button(pygame.sprite.Sprite):
-    def __init__(self, position, image, text, hidden=False, action=None, get_action=None, *args):
+    def __init__(self, position, image=None, text=None, hidden=False, action=None, get_action=None, *args):
         super().__init__()
 
         self.action = action
         self.args = args
-        self.get_action = get_action
-        self.call_action = get_action(action)
+
+        if get_action:
+            self.get_action = get_action
+            self.call_action = get_action(action)
+        else:
+            self.get_action = None
+            self.call_action = None
 
         self.font = pygame.font.SysFont('Klavika Bd', 30)
         self.text = self.font.render(text, True, (255, 255, 255))
@@ -48,6 +53,10 @@ class Button(pygame.sprite.Sprite):
         self.image_cpy = self.image
         self.hidden = hidden
         self.show_hidden = False
+
+    def set_action(self, get_action):
+        self.get_action = get_action
+        self.call_action = get_action(self.action)
     
     def update(self, show_hidden=False, mouse_pos=None):
         if len(mouse_pos) == 2 and self.rect.collidepoint(mouse_pos):

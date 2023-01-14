@@ -1,5 +1,8 @@
 from level_data import *
 from menu_items import Text, Button
+import pygame
+#pygame.init()
+pygame.font.init()
 
 levels = {
     1: {'position': (625, 400), 'path': 'assets/levels/level_1', 'data': level_1},
@@ -10,43 +13,49 @@ levels = {
 
 #Main Menu
 mm_texts = [
-    ((625, 125), "Talon's Adventure", 100, (255,255,255)),
+    Text(position=(625, 125), text="Talon's Adventure", size=100, color=(255,255,255)),
 ]
 
 mm_buttons = [
-    ((625, 400), "Play", False, 'to_overworld'),
-    ((625, 500), "Options", False, 'to_options'),
-    ((625, 600), "Quit", False, 'quit_game')
+    Button(position=(625, 400), text="Play", action="to_overworld"),
+    Button(position=(625, 500), text="Options", action="to_options"),
+    Button(position=(625, 600), text="Quit", action="quit_game"),
 ]
 
 #Options menu
 op_texts = [
-    ((625, 75), "Options", 40),
-    ((625, 300), "Inputs", 40),
-    ((625, 400), "Sound", 40),
-    ((625, 500), "Resolution", 40),
+    Text(position=(625, 75), text="Options", size=70),
+    Text(position=(625, 300), text="Inputs", size=40),
+    Text(position=(625, 400), text="SFX Volume", size=40),
+    Text(position=(625, 430), text="100", size=40, id="sfx_volume"),
+    Text(position=(625, 500), text="Music Volume", size=40),
+    Text(position=(625, 530), text="100", size=40, id="music_volume"),
 ]
 op_buttons = [
-    ((625, 600), "To Main Menu", False, 'to_main_menu'),
-    ((625, 700), "Back To Game", True, 'to_level'),
-    ((625, 650), "To Level Selection", False, 'to_overworld'),
+    Button(position=(625, 600), text="Main Menu", action="to_main_menu"),
+    Button(position=(625, 700), text="Back To Game", action="to_level"),
+    Button(position=(625, 650), text="Level Selection", action="to_overworld"),
+    Button(position=(580, 430), text="-", action="sfx_down"),
+    Button(position=(580, 530), text="-", action="music_down"),
+    Button(position=(670, 430), text="+", action="sfx_up"),
+    Button(position=(670, 530), text="+", action="music_up"),
 ]
 
 #UI overlay
 ui_texts = [
-    ((10, 10), "Time: 00:00", 20, (0,0,0), 'topleft', 'timer'),
-    ((10, 30), "Deaths: 0", 20, (0,0,0), 'topleft', 'deaths'),
-    ((10, 50), "Keys: 0", 20, (0,0,0), 'topleft', 'keys'),
+    Text(position=(10,10), text="Time: 00:00", size=20, color=(0,0,0), position_type='topleft', id='timer'),
+    Text(position=(10,30), text="Deaths: 0", size=20, color=(0,0,0), position_type='topleft', id='deaths'),
+    Text(position=(10,50), text="Keys: 0", size=20, color=(0,0,0), position_type='topleft', id='keys'),
 ]
 
 #Name input
 ni_texts = [
-    ((625, 75), "Enter your name", 40),
+    Text((625, 75), "Enter your name", 40),
 ]
 
 ni_buttons = [
-    ((625, 650), "Back To Main Menu", False, 'to_main_menu'),
-    ((625, 600), "Play", False, 'to_overworld'),
+    Button(position=(625,650), text="Main Menu", action="to_main_menu"),
+    Button(position=(625,600), text="Play", action="to_overworld"),
 ]
 
 #Menus
