@@ -61,7 +61,6 @@ class Level:
 
         #Level timer
         self.start_time = pygame.time.get_ticks()
-        print(self.start_time)
 
         #UI overlay
         self.ui_overlay = Menu(self.surface, self.get_action, 'ui_overlay', True)

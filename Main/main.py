@@ -90,10 +90,13 @@ while True:
                 mouse_pos = pygame.mouse.get_pos()
                 game.clicks.append(mouse_pos)
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_BACKSPACE:
-                game.input_text = game.input_text[:-1]
-            elif len(game.input_text) < 16:
-                game.input_text += event.unicode
+            if game.status == 'name_input':
+                if event.key == pygame.K_BACKSPACE:
+                    game.input_text = game.input_text[:-1]
+                elif event.key == pygame.K_RETURN:
+                    game.create_overworld(screen, game.selected_level, game.max_level)
+                elif len(game.input_text) < 16:
+                    game.input_text += event.unicode
             
     
     game.run()

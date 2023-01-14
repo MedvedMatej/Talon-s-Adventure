@@ -1,6 +1,7 @@
 import pygame
 from menu_items import Text, Button, Node
 from game_data import levels, menus
+from background import Background
 
 class Menu:
     def __init__(self, surface, get_action, menu, transparent=False):
@@ -38,6 +39,11 @@ class Menu:
 
         for pos,text,hidden,action in menus[self.menu]["buttons"]:
             self.buttons.add(Button(pos, None, text, hidden, action, self.get_action))
+
+        if menus[self.menu]["background"]:
+            self.background = Background([menus[self.menu]["background"]],self.surface)
+        #self.background = Background([menus[self.menu]["background"]],self.surface)
+        #menus[self.menu]["background"]
     
     def input(self, clicks=None):
         if not clicks:
@@ -56,6 +62,8 @@ class Menu:
 
         if not self.transparent:
             self.surface.fill((20, 20, 20))
+            if self.background:
+                self.background.draw()
         self.buttons.draw(self.surface)
         self.texts.draw(self.surface)
 
@@ -111,6 +119,7 @@ class Overworld:
         self.timer = 500
 
     def input_timer(self):
+        print(self.start_time, pygame.time.get_ticks())
         if not self.allow_input:
             if pygame.time.get_ticks() - self.start_time > self.timer:
                 self.allow_input = True

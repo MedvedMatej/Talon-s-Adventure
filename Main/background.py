@@ -6,8 +6,8 @@ class Background:
         self.surface = surface
 
         self.sky = pygame.image.load(images[0]).convert()
-        self.ground = pygame.image.load(images[1]).convert()
-        self.underground = pygame.image.load(images[2]).convert()
+        #self.ground = pygame.image.load(images[1]).convert()
+        #self.underground = pygame.image.load(images[2]).convert()
 
         self.sky = pygame.transform.scale(self.sky, (screen_width, screen_height))
         #self.ground = pygame.transform.scale(self.ground, (screen_width, tile_size*scale))

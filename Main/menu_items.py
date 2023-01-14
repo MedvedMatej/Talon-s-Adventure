@@ -7,7 +7,7 @@ class Text(pygame.sprite.Sprite):
         self.color = color
         self.position_type = position_type
         self.position = position
-        self.font = pygame.font.SysFont('Arial', size)
+        self.font = pygame.font.SysFont('Klavika Bd', size)
         self.text = self.font.render(text, True, color)
         self.size = self.text.get_size()
         self.image = pygame.Surface(self.size, pygame.SRCALPHA)
@@ -36,7 +36,7 @@ class Button(pygame.sprite.Sprite):
         self.get_action = get_action
         self.call_action = get_action(action)
 
-        self.font = pygame.font.SysFont('Arial', 30)
+        self.font = pygame.font.SysFont('Klavika Bd', 30)
         self.text = self.font.render(text, True, (255, 255, 255))
         self.size = self.text.get_size()
         self.image = pygame.Surface(self.size)
