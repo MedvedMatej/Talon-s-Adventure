@@ -55,7 +55,7 @@ class Menu:
 
         for click in clicks:
             for button in self.buttons:
-                if button.rect.collidepoint(click):
+                if button.actual_rect.collidepoint(click):
                     button.click()
 
     def run(self, clicks=None):
@@ -113,9 +113,9 @@ class Overworld:
 
         #Buttons
         self.buttons = pygame.sprite.Group()
-        self.buttons.add(Button((625,625), None, "PLAY", False, "create_level", get_action, self.surface))
-        self.buttons.add(Button((625,675), None, "OPTIONS", False, "to_options", get_action))
-        self.buttons.add(Button((625,725), None, "BACK TO MAIN MENU", False, "to_main_menu", get_action))
+        self.buttons.add(Button(position=(625,575), text="PLAY", action="create_level", get_action = get_action, image=("assets/menu_assets/button_long.png"), offset=(-25, -25), screen=[self.surface]))
+        self.buttons.add(Button(position=(625,650), text="OPTIONS", action="to_options", get_action = get_action, image=("assets/menu_assets/button_long.png"), offset=(-25, -25)))
+        self.buttons.add(Button(position=(625,725), text="MAIN MENU", action="to_main_menu", get_action = get_action, image=("assets/menu_assets/button_long.png"), offset=(-25, -25)))
 
         #Start time
         self.start_time = pygame.time.get_ticks()
@@ -139,7 +139,7 @@ class Overworld:
     def input(self, clicks=None):
         for click in clicks:
             for button in self.buttons:
-                if button.rect.collidepoint(click):
+                if button.actual_rect.collidepoint(click):
                     button.click()
 
             ##TODO: Check click on level nodes

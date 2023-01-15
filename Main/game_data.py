@@ -5,10 +5,10 @@ import pygame
 pygame.font.init()
 
 levels = {
-    1: {'position': (625, 400), 'path': 'assets/levels/level_1', 'data': level_1},
-    2: {'position': (1050, 400), 'path': 'assets/levels/level_2', 'data': level_2},
-    3: {'position': (1475, 400), 'path': 'assets/levels/level_3', 'data': level_3},
-    4: {'position': (1900, 400), 'path': 'assets/levels/level_4'},
+    1: {'position': (625, 325), 'path': 'assets/levels/level_1', 'data': level_1},
+    2: {'position': (1050, 325), 'path': 'assets/levels/level_2', 'data': level_2},
+    3: {'position': (1475, 325), 'path': 'assets/levels/level_3', 'data': level_3},
+    4: {'position': (1900, 325), 'path': 'assets/levels/level_4'},
 }
 
 #Main Menu
@@ -17,28 +17,28 @@ mm_texts = [
 ]
 
 mm_buttons = [
-    Button(position=(625, 400), text="Play", action="to_overworld"),
-    Button(position=(625, 500), text="Options", action="to_options"),
-    Button(position=(625, 600), text="Quit", action="quit_game"),
+    Button(position=(625, 400), text="Play", action="to_overworld", image=("assets/menu_assets/button_long.png"), offset=(-25, -25)),
+    Button(position=(625, 500), text="Options", action="to_options", image=("assets/menu_assets/button_long.png"), offset=(-25, -25)),
+    Button(position=(625, 600), text="Quit", action="quit_game", image=("assets/menu_assets/button_long.png"), offset=(-25, -25)),
 ]
 
 #Options menu
 op_texts = [
     Text(position=(625, 75), text="Options", size=70),
-    Text(position=(625, 300), text="Inputs", size=40),
-    Text(position=(625, 400), text="SFX Volume", size=40),
-    Text(position=(625, 430), text="100", size=40, id="sfx_volume"),
-    Text(position=(625, 500), text="Music Volume", size=40),
-    Text(position=(625, 530), text="100", size=40, id="music_volume"),
+    #Text(position=(625, 300), text="Inputs", size=40),
+    Text(position=(625, 200), text="SFX Volume", size=40),
+    Text(position=(625, 250), text="100", size=40, id="sfx_volume"),
+    Text(position=(625, 350), text="Music Volume", size=40),
+    Text(position=(625, 400), text="100", size=40, id="music_volume"),
 ]
 op_buttons = [
-    Button(position=(625, 600), text="Main Menu", action="to_main_menu"),
-    Button(position=(625, 700), text="Back To Game", action="to_level"),
-    Button(position=(625, 650), text="Level Selection", action="to_overworld"),
-    Button(position=(580, 430), text="-", action="sfx_down"),
-    Button(position=(580, 530), text="-", action="music_down"),
-    Button(position=(670, 430), text="+", action="sfx_up"),
-    Button(position=(670, 530), text="+", action="music_up"),
+    Button(position=(625, 550), text="Main Menu", action="to_main_menu", image=("assets/menu_assets/button_long.png"), offset=(-25, -25)),
+    Button(position=(625, 700), text="Back To Game", action="to_level", image=("assets/menu_assets/button_long.png"), offset=(-25, -25)),
+    Button(position=(625, 625), text="Level Selection", action="to_overworld", image=("assets/menu_assets/button_long.png"), offset=(-25, -25)),
+    Button(position=(550, 250), text="-", action="sfx_down", image=("assets/menu_assets/button_short_left.png")),
+    Button(position=(550, 400), text="-", action="music_down", image=("assets/menu_assets/button_short_left.png")),
+    Button(position=(690, 250), text="+", action="sfx_up", image=("assets/menu_assets/button_short_right.png")),
+    Button(position=(690, 400), text="+", action="music_up", image=("assets/menu_assets/button_short_right.png")),
 ]
 
 #UI overlay
@@ -54,8 +54,8 @@ ni_texts = [
 ]
 
 ni_buttons = [
-    Button(position=(625,650), text="Main Menu", action="to_main_menu"),
-    Button(position=(625,600), text="Play", action="to_overworld"),
+    Button(position=(625,650), text="Main Menu", action="to_main_menu", image=("assets/menu_assets/button_long.png"), offset=(-25, -25)),
+    Button(position=(625,550), text="Play", action="to_overworld", image=("assets/menu_assets/button_long.png"), offset=(-25, -25)),
 ]
 
 #Menus

@@ -185,8 +185,6 @@ screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption("Talon's Adventure")
 clock = pygame.time.Clock()
 game = Game()
-#bullet_sound  = pygame.mixer.Sound('./assets/audio/effects/hit.wav')
-
 
 while True:
     for event in pygame.event.get():

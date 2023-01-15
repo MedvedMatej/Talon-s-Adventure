@@ -28,11 +28,15 @@ class Text(pygame.sprite.Sprite):
 
 
 class Button(pygame.sprite.Sprite):
-    def __init__(self, position, image=None, text=None, hidden=False, action=None, get_action=None, *args):
+    def __init__(self, position, image=None, text=None, hidden=False, action=None, get_action=None, offset=(0,0), screen=[]):
         super().__init__()
 
         self.action = action
-        self.args = args
+        self.args = screen
+        
+        self.color = (0,0,0)
+        self.hover_color = (255,255,255)
+        self.offset = offset
 
         if get_action:
             self.get_action = get_action
@@ -41,13 +45,34 @@ class Button(pygame.sprite.Sprite):
             self.get_action = None
             self.call_action = None
 
-        self.font = pygame.font.SysFont('Klavika Bd', 30)
-        self.text = self.font.render(text, True, (255, 255, 255))
-        self.size = self.text.get_size()
-        self.image = pygame.Surface(self.size)
-        self.rect = self.image.get_rect(center=position)
-        self.image.fill((0, 0, 0))
-        self.image.blit(self.text, (0, 0))
+        self.font = pygame.font.SysFont('Klavika Bd', 45)
+        self.text = text
+        self._text = self.font.render(self.text, True, self.color)
+        self._htext = self.font.render(self.text, True, self.hover_color)
+
+
+
+        if not image:
+            self.size = self._text.get_size()
+            self.image = pygame.Surface(self.size)
+            self.rect = self.image.get_rect(center=position)
+            self.image.fill((0, 0, 0))
+            self.image.blit(self._text, (0, 0))
+            self.actual_rect = self.rect
+        else:
+            
+            self._image = pygame.image.load(image)
+            self._himage = pygame.image.load(image)
+            self.rect = self._image.get_rect(center=position)
+            self.rect[0] += offset[0]
+            self.rect[1] += offset[1]
+            x,y,w,h = self.rect
+            self.actual_rect = pygame.Rect(x-offset[0],y-offset[1],w+offset[0],h+offset[1])
+
+            self._image.blit(self._text, (-self.offset[0]/2 + ((self.rect[2]-self._text.get_size()[0])/2), -self.offset[1]+12))
+            self._himage.blit(self._htext, (-self.offset[0]/2 + ((self.rect[2]-self._htext.get_size()[0])/2), -self.offset[1]+12))
+
+            self.image = self._himage
 
         #Hide functionality
         self.image_cpy = self.image
@@ -59,18 +84,16 @@ class Button(pygame.sprite.Sprite):
         self.call_action = get_action(self.action)
     
     def update(self, show_hidden=False, mouse_pos=None):
-        if len(mouse_pos) == 2 and self.rect.collidepoint(mouse_pos):
-            self.image.fill((50, 50, 50))
-            self.image.blit(self.text, (0, 0))
+        if len(mouse_pos) == 2 and self.actual_rect.collidepoint(mouse_pos):
+            self.image = self._himage
         else:
-            self.image.fill((0, 0, 0))
-            self.image.blit(self.text, (0, 0))
+            self.image = self._image
 
-        self.show_hidden = show_hidden
+        """ self.show_hidden = show_hidden
         if self.hidden and not show_hidden:
             self.image = pygame.Surface(self.size, pygame.SRCALPHA)
         else:
-            self.image = self.image_cpy
+            self.image = self.image_cpy """
 
     def click(self):
         if self.action and (not self.hidden or self.show_hidden):
