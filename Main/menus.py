@@ -96,15 +96,15 @@ class LeaderboardMenu(Menu):
                 json.dump([], f)
             self.leaderboard = []
 
-        
+        self.texts.add(Text((625, 150), f"Level {level}", 40, (255, 255, 255)))
         self.texts.add(Text((300, 200), "#", 30, (255, 255, 255), 'topleft'))
         self.texts.add(Text((355, 200), "Name", 30, (255, 255, 255), 'topleft'))
-        self.texts.add(Text((675, 200), "Time", 30, (255, 255, 255), 'topleft'))
+        self.texts.add(Text((700, 200), "Time", 30, (255, 255, 255), 'topleft'))
         self.texts.add(Text((875, 200), "Deaths", 30, (255, 255, 255), 'topleft'))
         for i,player in enumerate(self.leaderboard):
             self.texts.add(Text((300, 235+ i*35), f"{i+1}", 30, (255, 255, 255), 'topleft'))
             self.texts.add(Text((355, 235+ i*35), f"{player['name']}", 30, (255, 255, 255), 'topleft'))
-            self.texts.add(Text((675, 235+ i*35), f"{player['time']}", 30, (255, 255, 255), 'topleft'))
+            self.texts.add(Text((700, 235+ i*35), f"{player['time']}", 30, (255, 255, 255), 'topleft'))
             self.texts.add(Text((875, 235+ i*35), f"{player['deaths']}", 30, (255, 255, 255), 'topleft'))
 
         self.leaderboard_rect = pygame.Rect(275, 185, 700, 400)
