@@ -96,19 +96,22 @@ class LeaderboardMenu(Menu):
                 json.dump([], f)
             self.leaderboard = []
 
-        self.texts.add(Text((625, 150), f"Level {level}", 40, (255, 255, 255)))
-        self.texts.add(Text((300, 200), "#", 30, (255, 255, 255), 'topleft'))
-        self.texts.add(Text((355, 200), "Name", 30, (255, 255, 255), 'topleft'))
-        self.texts.add(Text((700, 200), "Time", 30, (255, 255, 255), 'topleft'))
-        self.texts.add(Text((875, 200), "Deaths", 30, (255, 255, 255), 'topleft'))
-        for i,player in enumerate(self.leaderboard):
-            self.texts.add(Text((300, 235+ i*35), f"{i+1}", 30, (255, 255, 255), 'topleft'))
-            self.texts.add(Text((355, 235+ i*35), f"{player['name']}", 30, (255, 255, 255), 'topleft'))
-            self.texts.add(Text((700, 235+ i*35), f"{player['time']}", 30, (255, 255, 255), 'topleft'))
-            self.texts.add(Text((875, 235+ i*35), f"{player['deaths']}", 30, (255, 255, 255), 'topleft'))
+        self.scoreboard = pygame.image.load("./assets/menu_assets/scoreboard.png")
 
-        self.leaderboard_rect = pygame.Rect(275, 185, 700, 400)
-        self.rect_color = (255, 255, 255)
+        self.font_color = (0, 0, 0)
+        self.texts.add(Text((625, 150), f"Level {level}", 40, (255, 255, 255)))
+        self.texts.add(Text((300, 200), "#", 30, self.font_color, 'topleft'))
+        self.texts.add(Text((355, 200), "Name", 30, self.font_color, 'topleft'))
+        self.texts.add(Text((700, 200), "Time", 30, self.font_color, 'topleft'))
+        self.texts.add(Text((875, 200), "Deaths", 30, self.font_color, 'topleft'))
+        for i,player in enumerate(self.leaderboard):
+            self.texts.add(Text((300, 235+ i*35), f"{i+1}", 30, self.font_color, 'topleft'))
+            self.texts.add(Text((355, 235+ i*35), f"{player['name']}", 30, self.font_color, 'topleft'))
+            self.texts.add(Text((700, 235+ i*35), f"{player['time']}", 30, self.font_color, 'topleft'))
+            self.texts.add(Text((875, 235+ i*35), f"{player['deaths']}", 30, self.font_color, 'topleft'))
+
+        #self.leaderboard_rect = pygame.Rect(275, 185, 700, 400)
+        #self.rect_color = (255, 255, 255)
         self.level = level
 
     def run(self, clicks = None):
@@ -119,7 +122,8 @@ class LeaderboardMenu(Menu):
         self.surface.fill((20, 20, 20))
         if self.background:
             self.background.draw()
-        pygame.draw.rect(self.surface, self.rect_color, self.leaderboard_rect, 2)
+        #pygame.draw.rect(self.surface, self.rect_color, self.leaderboard_rect, 2)
+        self.surface.blit(self.scoreboard, (265, 169))
         self.buttons.draw(self.surface)
         self.texts.draw(self.surface)
 
@@ -162,7 +166,7 @@ class Overworld:
 
         for key, value in levels.items():
             if key <= self.max_level:
-                self.nodes.add(Node((value['position'][0] - 425*(self.selected_level-1),value['position'][1]), unlocked=True, speed=self.speed, image=pygame.image.load(value['path']+ '/level_banner.png').convert_alpha(), id=key, get_action=self.get_action))
+                self.nodes.add(Node((value['position'][0] - 425*(self.selected_level-1),value['position'][1]), unlocked=True, speed=self.speed, image=pygame.image.load('./assets/menu_assets/level_board.png').convert_alpha(), id=key, get_action=self.get_action))
             else:  
                 self.nodes.add(Node((value['position'][0] - 425*(self.selected_level-1),value['position'][1]), speed=self.speed, id=key, get_action=self.get_action))
 

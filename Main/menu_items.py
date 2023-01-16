@@ -115,13 +115,17 @@ class Node(pygame.sprite.Sprite):
         self.target = None
         self.id = id
         self.get_action = get_action
-
+        
         #Leaderboard button
         self.buttons = pygame.sprite.Group()
         self.buttons.add(Button(position=(self.pos[0]+100, self.pos[1]-45), image='assets/menu_assets/leaderboard_icon.png', action='create_leaderboard', get_action=self.get_action, id = (self.id)))
 
         if not unlocked:
-            self.image = pygame.image.load('assets/levels/level_banner_locked.png').convert_alpha()
+            self.image = pygame.image.load('assets/menu_assets/level_board_locked.png').convert_alpha()
+        else:
+            self.font = pygame.font.SysFont('Klavika Bd', 75)
+            self.text = self.font.render(f'Level {str(self.id)}', True, (0,0,0))
+            self.image.blit(self.text, (self.image.get_size()[0]/2 - self.text.get_size()[0]/2, 100))
         self.rect = self.image.get_rect(center=position)
 
 
