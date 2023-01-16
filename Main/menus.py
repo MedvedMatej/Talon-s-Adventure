@@ -21,33 +21,14 @@ class Menu:
 
     def setup(self):
         for text in menus[self.menu]["texts"]:
-            """ if len(text) == 2:
-                pos, text = text
-                self.texts.add(Text(pos, text))
-            elif len(text) == 3:
-                pos, text, size = text
-                self.texts.add(Text(pos, text, size))
-            elif len(text) == 4:
-                pos, text, size, color = text
-                self.texts.add(Text(pos, text, size, color))
-            elif len(text) == 5:
-                pos, text, size, color, position_type = text
-                self.texts.add(Text(pos, text, size, color, position_type))
-            elif len(text) == 6:
-                pos, text, size, color, position_type, id = text
-                self.texts.add(Text(pos, text, size, color, position_type, id)) """
-            #self.texts.add(Text(pos, text, size, color))
             self.texts.add(text)
 
         for button in menus[self.menu]["buttons"]:
-            #self.buttons.add(Button(pos, None, text, hidden, action, self.get_action))
             button.set_action(self.get_action)
             self.buttons.add(button)
 
         if menus[self.menu]["background"]:
             self.background = Background([menus[self.menu]["background"]],self.surface)
-        #self.background = Background([menus[self.menu]["background"]],self.surface)
-        #menus[self.menu]["background"]
     
     def input(self, clicks=None):
         if not clicks:
@@ -75,11 +56,12 @@ class InputMenu(Menu):
     def __init__(self, surface, get_action, menu, transparent=False):
         super().__init__(surface, get_action, menu, transparent)
         self.input_text = ""
-        self.input_field = Text((355, 300), self.input_text, 50, (255, 255, 255), 'topleft', "input_field")
+        self.input_field = Text((368, 300), self.input_text, 50, (0, 0, 0), 'topleft', "input_field")
         self.texts.add(self.input_field)
 
-        self.input_rect = pygame.Rect(350, 300, 550, 62)
-        self.rect_color = (255, 255, 255)
+        #self.input_rect = pygame.Rect(350, 285, 550, 62)
+        #self.rect_color = (255, 255, 255)
+        self.name_input_rect = pygame.image.load("assets/menu_assets/name_input.png")
 
     def run(self, clicks = None, text = None):
         self.input_field.update(text)
@@ -90,16 +72,18 @@ class InputMenu(Menu):
 
         if not self.transparent:
             self.surface.fill((20, 20, 20))
-        pygame.draw.rect(self.surface, self.rect_color, self.input_rect, 2)
+        #pygame.draw.rect(self.surface, self.rect_color, self.input_rect, 2)
+        self.surface.blit(self.name_input_rect, (350, 285))
         self.buttons.draw(self.surface)
         self.texts.draw(self.surface)
 
 class Overworld:
-    def __init__(self, surface, start_level=1, max_level=2, speed= 10, level_method=None, get_action=None):
+    def __init__(self, surface, start_level=1, max_level=2, speed= 16, level_method=None, get_action=None):
         self.surface = surface
         self.selected_level = start_level
         self.max_level = max_level
         self.create_level = level_method
+        self.get_action = get_action
 
         self.direction = pygame.math.Vector2(0,0)
         self.shift = 0
@@ -109,13 +93,13 @@ class Overworld:
         self.setup_nodes()
         #Texts
         self.texts = pygame.sprite.Group()
-        self.texts.add(Text((625, 100), 'LEVEL SELECTION', 70, (255, 255, 255)))
+        self.texts.add(Text((625, 100), 'Level Selection', 70, (255, 255, 255)))
 
         #Buttons
         self.buttons = pygame.sprite.Group()
-        self.buttons.add(Button(position=(625,575), text="PLAY", action="create_level", get_action = get_action, image=("assets/menu_assets/button_long.png"), offset=(-25, -25), screen=[self.surface]))
-        self.buttons.add(Button(position=(625,650), text="OPTIONS", action="to_options", get_action = get_action, image=("assets/menu_assets/button_long.png"), offset=(-25, -25)))
-        self.buttons.add(Button(position=(625,725), text="MAIN MENU", action="to_main_menu", get_action = get_action, image=("assets/menu_assets/button_long.png"), offset=(-25, -25)))
+        self.buttons.add(Button(position=(625,575), text="Play", action="create_level", get_action = get_action, image=("assets/menu_assets/button_long.png"), offset=(-25, -25), screen=[self.surface]))
+        self.buttons.add(Button(position=(625,650), text="Options", action="to_options", get_action = get_action, image=("assets/menu_assets/button_long.png"), offset=(-25, -25)))
+        self.buttons.add(Button(position=(625,725), text="Main Menu", action="to_main_menu", get_action = get_action, image=("assets/menu_assets/button_long.png"), offset=(-25, -25)))
 
         #Start time
         self.start_time = pygame.time.get_ticks()
@@ -132,9 +116,9 @@ class Overworld:
 
         for key, value in levels.items():
             if key <= self.max_level:
-                self.nodes.add(Node((value['position'][0] - 425*(self.selected_level-1),value['position'][1]), unlocked=True, speed=self.speed, image=pygame.image.load(value['path']+ '/level_banner.png').convert_alpha()))
+                self.nodes.add(Node((value['position'][0] - 425*(self.selected_level-1),value['position'][1]), unlocked=True, speed=self.speed, image=pygame.image.load(value['path']+ '/level_banner.png').convert_alpha(), id=key, get_action=self.get_action))
             else:  
-                self.nodes.add(Node((value['position'][0] - 425*(self.selected_level-1),value['position'][1]), speed=self.speed))
+                self.nodes.add(Node((value['position'][0] - 425*(self.selected_level-1),value['position'][1]), speed=self.speed, id=key, get_action=self.get_action))
 
     def input(self, clicks=None):
         for click in clicks:

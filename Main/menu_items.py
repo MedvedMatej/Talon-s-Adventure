@@ -28,11 +28,12 @@ class Text(pygame.sprite.Sprite):
 
 
 class Button(pygame.sprite.Sprite):
-    def __init__(self, position, image=None, text=None, hidden=False, action=None, get_action=None, offset=(0,0), screen=[]):
+    def __init__(self, position, image=None, text=None, hidden=False, action=None, get_action=None, offset=(0,0), screen=[], id=None):
         super().__init__()
 
         self.action = action
         self.args = screen
+        self.id = id
         
         self.color = (0,0,0)
         self.hover_color = (255,255,255)
@@ -64,7 +65,7 @@ class Button(pygame.sprite.Sprite):
             self._image = pygame.image.load(image)
             self._himage = pygame.image.load(image)
             self.rect = self._image.get_rect(center=position)
-            self.rect[0] += offset[0]
+            self.rect[0] += offset[0]/2
             self.rect[1] += offset[1]
             x,y,w,h = self.rect
             self.actual_rect = pygame.Rect(x-offset[0],y-offset[1],w+offset[0],h+offset[1])
@@ -75,9 +76,7 @@ class Button(pygame.sprite.Sprite):
             self.image = self._himage
 
         #Hide functionality
-        self.image_cpy = self.image
-        self.hidden = hidden
-        self.show_hidden = False
+        self.hidden = False
 
     def set_action(self, get_action):
         self.get_action = get_action
@@ -86,17 +85,19 @@ class Button(pygame.sprite.Sprite):
     def update(self, show_hidden=False, mouse_pos=None):
         if len(mouse_pos) == 2 and self.actual_rect.collidepoint(mouse_pos):
             self.image = self._himage
+            if self.id:
+                print(f"Hovering over button {self.id}")
         else:
             self.image = self._image
 
-        """ self.show_hidden = show_hidden
-        if self.hidden and not show_hidden:
-            self.image = pygame.Surface(self.size, pygame.SRCALPHA)
+        if self.id == 'back_to_game' and not self.get_action('level'):
+            self.hidden = True
+            self.image = pygame.Surface((0,0), pygame.SRCALPHA)
         else:
-            self.image = self.image_cpy """
+            self.hidden = False
 
     def click(self):
-        if self.action and (not self.hidden or self.show_hidden):
+        if self.action and (not self.hidden):
             if self.action == 'create_level':
                 selected_level = self.get_action('get_selected_level')()
                 self.call_action(selected_level, *self.args)
@@ -104,14 +105,21 @@ class Button(pygame.sprite.Sprite):
                 self.call_action(*self.args)
 
 class Node(pygame.sprite.Sprite):
-    def __init__(self, position, unlocked=False, speed=5, image=None):
+    def __init__(self, position, unlocked=False, speed=5, image=None, id=None, get_action=None):
         super().__init__()
         self.image = image if image else pygame.Surface((350, 250))
         self.unlocked = unlocked
         self.pos = position
         self.speed = speed
         self.target = None
+        self.id = id
+        self.get_action = get_action
 
+        #Leaderboard button
+        self.buttons = pygame.sprite.Group()
+        self.buttons.add(Button(position=(self.pos[0], self.pos[1]+100), text="Test", image='assets/menu_assets/leaderboard_icon.png', action='create_leaderboard', get_action=self.get_action, id = (self.id)))
+        for button in self.buttons:
+            print(button.id)
         if not unlocked:
             self.image = pygame.image.load('assets/levels/level_banner_locked.png').convert_alpha()
         self.rect = self.image.get_rect(center=position)
@@ -126,4 +134,7 @@ class Node(pygame.sprite.Sprite):
                 if (dir < 0 and self.pos[0] <= self.target[0]) or (dir > 0 and self.pos[0] >= self.target[0]):
                     self.pos = self.target
                     self.target = None
+
+        self.buttons.update(mouse_pos=pygame.mouse.get_pos())
+        self.buttons.draw(self.image)
 

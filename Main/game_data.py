@@ -9,6 +9,12 @@ levels = {
     2: {'position': (1050, 325), 'path': 'assets/levels/level_2', 'data': level_2},
     3: {'position': (1475, 325), 'path': 'assets/levels/level_3', 'data': level_3},
     4: {'position': (1900, 325), 'path': 'assets/levels/level_4'},
+    5: {'position': (2325, 325), 'path': 'assets/levels/level_4'},
+    6: {'position': (2750, 325), 'path': 'assets/levels/level_4'},
+    7: {'position': (3175, 325), 'path': 'assets/levels/level_4'},
+    8: {'position': (3600, 325), 'path': 'assets/levels/level_4'},
+    9: {'position': (4025, 325), 'path': 'assets/levels/level_4'},
+    10: {'position': (4450, 325), 'path': 'assets/levels/level_4'},
 }
 
 #Main Menu
@@ -33,12 +39,12 @@ op_texts = [
 ]
 op_buttons = [
     Button(position=(625, 550), text="Main Menu", action="to_main_menu", image=("assets/menu_assets/button_long.png"), offset=(-25, -25)),
-    Button(position=(625, 700), text="Back To Game", action="to_level", image=("assets/menu_assets/button_long.png"), offset=(-25, -25)),
+    Button(position=(625, 700), text="Back To Game", action="to_level", image=("assets/menu_assets/button_long.png"), offset=(-25, -25), id="back_to_game"),
     Button(position=(625, 625), text="Level Selection", action="to_overworld", image=("assets/menu_assets/button_long.png"), offset=(-25, -25)),
     Button(position=(550, 250), text="-", action="sfx_down", image=("assets/menu_assets/button_short_left.png")),
     Button(position=(550, 400), text="-", action="music_down", image=("assets/menu_assets/button_short_left.png")),
-    Button(position=(690, 250), text="+", action="sfx_up", image=("assets/menu_assets/button_short_right.png")),
-    Button(position=(690, 400), text="+", action="music_up", image=("assets/menu_assets/button_short_right.png")),
+    Button(position=(700, 250), text="+", action="sfx_up", image=("assets/menu_assets/button_short_right.png")),
+    Button(position=(700, 400), text="+", action="music_up", image=("assets/menu_assets/button_short_right.png")),
 ]
 
 #UI overlay
@@ -50,12 +56,21 @@ ui_texts = [
 
 #Name input
 ni_texts = [
-    Text((625, 75), "Enter your name", 40),
+    Text((625, 75), "Enter your name", 70),
 ]
 
 ni_buttons = [
     Button(position=(625,650), text="Main Menu", action="to_main_menu", image=("assets/menu_assets/button_long.png"), offset=(-25, -25)),
     Button(position=(625,550), text="Play", action="to_overworld", image=("assets/menu_assets/button_long.png"), offset=(-25, -25)),
+]
+
+#Leaderboard
+lb_texts = [
+    Text((625, 75), "Leaderboard", 70),
+]
+
+lb_buttons = [
+    Button(position=(625, 625), text="Level Selection", action="to_overworld", image=("assets/menu_assets/button_long.png"), offset=(-25, -25)),
 ]
 
 #Menus
@@ -64,4 +79,5 @@ menus = {
     'options': {'texts': op_texts, 'buttons': op_buttons, 'background': ''},
     'ui_overlay': {'texts': ui_texts, 'buttons': [], 'background': ''},
     'name_input': {'texts': ni_texts, 'buttons': ni_buttons, 'background': ''},
+    'leaderboard': {'texts': lb_texts, 'buttons': lb_buttons, 'background': ''},
 }

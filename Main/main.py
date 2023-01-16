@@ -24,8 +24,10 @@ class Game:
         self.options = Menu(screen, self.get_action, 'options')
         self.name_input = InputMenu(screen, self.get_action, 'name_input')
         self.input_text = ""
+        self.leaderboard = None#Menu(screen, self.get_action, 'leaderboard')
         
         self.status = 'main_menu'
+        #self.status = 'leaderboard'
         
         #Event data
         self.clicks = []
@@ -55,7 +57,9 @@ class Game:
         #Update label
         for text in self.options.texts:
             if text.id == 'sfx_volume':
-                text.update(str(round(volume*100)))
+                string = str(round(volume*100))
+                string = ' '*(3-len(string)) + string
+                text.update(string)
 
     def set_music_volume(self, volume):
         self.music.set_volume(volume)
@@ -64,7 +68,9 @@ class Game:
         #Update label
         for text in self.options.texts:
             if text.id == 'music_volume':
-                text.update(str(round(volume*100)))
+                string = str(round(volume*100))
+                string = ' '*(3-len(string)) + string
+                text.update(string)
 
     def music_down(self):
         self.music_volume -= 0.05
@@ -134,6 +140,10 @@ class Game:
         self.level = Level(level, surface, self.create_overworld, self.get_action)
         self.status = 'level'
 
+    def create_leaderboard(self, surface):
+        self.leaderboard = Menu(surface, self.get_action, 'leaderboard')
+        self.status = 'leaderboard'
+
     def create_overworld(self, surface, current_level, max_level):
         if self.max_level < max_level:
             self.max_level = max_level
@@ -177,6 +187,8 @@ class Game:
             self.overworld.run(self.clicks)
         elif self.status == 'level':
             self.level.run()
+        elif self.status == 'leaderboard':
+            self.leaderboard.run(self.clicks)
         self.clicks = []
 
 #Initialize pygame
