@@ -7,6 +7,7 @@ from background import Background
 from player import Player
 from game_data import levels
 from menus import Menu
+import json
 
 class Level:
     def __init__(self, selected_level, surface, overworld_method=None, get_action=None):
@@ -251,6 +252,23 @@ class Level:
     
     def update(self):
         if self.win:
+            self.leaderboard = None
+            #Read JSON file
+            try:
+                with open(f'scoreboard_{self.selected_level}.json', 'r') as file:
+                    self.leaderboard = json.load(file)
+            except:
+                self.leaderboard = []
+
+            seconds = (pygame.time.get_ticks() - self.start_time)/1000
+            minutes = seconds//60
+            seconds = seconds%60
+            self.leaderboard.append({'name': self.get_action('input_text'), 'deaths': self.player.death_counter, 'time': f'{str(int(minutes)).zfill(2)}:{str(int(seconds)).zfill(2)}'})
+            #Write JSON file
+            with open(f'scoreboard_{self.selected_level}.json', 'w') as file:
+                json.dump(self.leaderboard, file, indent=4)
+            
+            #print(self.selected_level ,self.player.death_counter, (pygame.time.get_ticks() - self.start_time)/1000, self.get_action('input_text'))
             self.create_overworld(self.surface,self.selected_level+1, self.selected_level+1)
 
         for text in self.ui_overlay.texts:

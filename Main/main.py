@@ -15,7 +15,7 @@ class Game:
         self.sounds = {}
         self.music = None
         self.set_sounds()
-        self.music.play(loops=-1)
+        
 
         #Setup states
         self.level = None
@@ -38,6 +38,7 @@ class Game:
         self.controls = {}
         self.load_settings()
         self.apply_settings()
+        self.music.play(loops=-1)
 
     def set_sounds(self):
         self.sounds['hit'] = pygame.mixer.Sound('./assets/audio/effects/hit.wav')
