@@ -49,9 +49,9 @@ op_buttons = [
 
 #UI overlay
 ui_texts = [
-    Text(position=(10,10), text="Time: 00:00", size=20, color=(0,0,0), position_type='topleft', id='timer'),
-    Text(position=(10,30), text="Deaths: 0", size=20, color=(0,0,0), position_type='topleft', id='deaths'),
-    Text(position=(10,50), text="Keys: 0", size=20, color=(0,0,0), position_type='topleft', id='keys'),
+    Text(position=(10,10), text="Time: 00:00", size=30, color=(0,0,0), position_type='topleft', id='timer'),
+    Text(position=(10,30), text="Deaths: 0", size=30, color=(0,0,0), position_type='topleft', id='deaths'),
+    Text(position=(10,50), text="Keys: 0", size=30, color=(0,0,0), position_type='topleft', id='keys'),
 ]
 
 #Name input
@@ -70,7 +70,7 @@ lb_texts = [
 ]
 
 lb_buttons = [
-    Button(position=(625, 625), text="Level Selection", action="to_overworld", image=("assets/menu_assets/button_long.png"), offset=(-25, -25)),
+    Button(position=(625, 725), text="Level Selection", action="to_overworld", image=("assets/menu_assets/button_long.png"), offset=(-25, -25)),
 ]
 
 #Menus

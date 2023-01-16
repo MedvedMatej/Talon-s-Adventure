@@ -2,6 +2,7 @@ import pygame
 from menu_items import Text, Button, Node
 from game_data import levels, menus
 from background import Background
+import json
 
 class Menu:
     def __init__(self, surface, get_action, menu, transparent=False):
@@ -77,6 +78,51 @@ class InputMenu(Menu):
         self.buttons.draw(self.surface)
         self.texts.draw(self.surface)
 
+class LeaderboardMenu(Menu):
+    def __init__(self, surface, get_action, menu, transparent=False, level=1):
+        super().__init__(surface, get_action, menu, transparent)
+        self.transparent = transparent
+        
+        self.leaderboard = None
+        #Read JSON file
+        try:
+            with open(f"scoreboard_{level}.json", "r") as f:
+                self.leaderboard = json.load(f)
+                #Sort by time and deaths
+                self.leaderboard.sort(key=lambda x: (x["time"], x["deaths"]))
+                self.leaderboard = self.leaderboard[:10]
+        except:
+            with open(f"scoreboard_{level}.json", "w") as f:
+                json.dump([], f)
+            self.leaderboard = []
+
+        
+        self.texts.add(Text((300, 200), "#", 30, (255, 255, 255), 'topleft'))
+        self.texts.add(Text((355, 200), "Name", 30, (255, 255, 255), 'topleft'))
+        self.texts.add(Text((675, 200), "Time", 30, (255, 255, 255), 'topleft'))
+        self.texts.add(Text((875, 200), "Deaths", 30, (255, 255, 255), 'topleft'))
+        for i,player in enumerate(self.leaderboard):
+            self.texts.add(Text((300, 235+ i*35), f"{i+1}", 30, (255, 255, 255), 'topleft'))
+            self.texts.add(Text((355, 235+ i*35), f"{player['name']}", 30, (255, 255, 255), 'topleft'))
+            self.texts.add(Text((675, 235+ i*35), f"{player['time']}", 30, (255, 255, 255), 'topleft'))
+            self.texts.add(Text((875, 235+ i*35), f"{player['deaths']}", 30, (255, 255, 255), 'topleft'))
+
+        self.leaderboard_rect = pygame.Rect(275, 185, 700, 400)
+        self.rect_color = (255, 255, 255)
+        self.level = level
+
+    def run(self, clicks = None):
+        self.input(clicks)
+        self.buttons.update(self.show_hidden, pygame.mouse.get_pos())
+
+
+        self.surface.fill((20, 20, 20))
+        if self.background:
+            self.background.draw()
+        pygame.draw.rect(self.surface, self.rect_color, self.leaderboard_rect, 2)
+        self.buttons.draw(self.surface)
+        self.texts.draw(self.surface)
+
 class Overworld:
     def __init__(self, surface, start_level=1, max_level=2, speed= 16, level_method=None, get_action=None):
         self.surface = surface
@@ -126,6 +172,11 @@ class Overworld:
                 if button.actual_rect.collidepoint(click):
                     button.click()
 
+            for node in self.nodes:
+                for button in node.buttons:
+                    if button.actual_rect.collidepoint(click):
+                        button.click()
+
             ##TODO: Check click on level nodes
 
         keys = pygame.key.get_pressed()
@@ -168,5 +219,7 @@ class Overworld:
 
         self.surface.fill((20, 20, 20))
         self.nodes.draw(self.surface)
+        for node in self.nodes:
+            node.buttons.draw(self.surface)
         self.buttons.draw(self.surface)
         self.texts.draw(self.surface)

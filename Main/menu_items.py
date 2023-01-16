@@ -8,6 +8,7 @@ class Text(pygame.sprite.Sprite):
         self.position_type = position_type
         self.position = position
         self.font = pygame.font.SysFont('Klavika Bd', size)
+        self._text = text
         self.text = self.font.render(text, True, color)
         self.size = self.text.get_size()
         self.image = pygame.Surface(self.size, pygame.SRCALPHA)
@@ -85,8 +86,6 @@ class Button(pygame.sprite.Sprite):
     def update(self, show_hidden=False, mouse_pos=None):
         if len(mouse_pos) == 2 and self.actual_rect.collidepoint(mouse_pos):
             self.image = self._himage
-            if self.id:
-                print(f"Hovering over button {self.id}")
         else:
             self.image = self._image
 
@@ -101,6 +100,8 @@ class Button(pygame.sprite.Sprite):
             if self.action == 'create_level':
                 selected_level = self.get_action('get_selected_level')()
                 self.call_action(selected_level, *self.args)
+            elif self.action == 'create_leaderboard':
+                self.call_action(self.id, *self.args)
             else:
                 self.call_action(*self.args)
 
@@ -117,9 +118,8 @@ class Node(pygame.sprite.Sprite):
 
         #Leaderboard button
         self.buttons = pygame.sprite.Group()
-        self.buttons.add(Button(position=(self.pos[0], self.pos[1]+100), text="Test", image='assets/menu_assets/leaderboard_icon.png', action='create_leaderboard', get_action=self.get_action, id = (self.id)))
-        for button in self.buttons:
-            print(button.id)
+        self.buttons.add(Button(position=(self.pos[0]+100, self.pos[1]-45), image='assets/menu_assets/leaderboard_icon.png', action='create_leaderboard', get_action=self.get_action, id = (self.id)))
+
         if not unlocked:
             self.image = pygame.image.load('assets/levels/level_banner_locked.png').convert_alpha()
         self.rect = self.image.get_rect(center=position)
@@ -131,10 +131,12 @@ class Node(pygame.sprite.Sprite):
             if (self.target[0] - self.pos[0]) != 0:
                 dir = (self.target[0] - self.pos[0]) / abs((self.target[0] - self.pos[0]))
                 self.pos = (self.pos[0] + self.speed * dir, self.pos[1])
+
                 if (dir < 0 and self.pos[0] <= self.target[0]) or (dir > 0 and self.pos[0] >= self.target[0]):
                     self.pos = self.target
                     self.target = None
 
-        self.buttons.update(mouse_pos=pygame.mouse.get_pos())
-        self.buttons.draw(self.image)
-
+        #self.buttons.update(mouse_pos=pygame.mouse.get_pos())
+        for button in self.buttons:
+            button.rect.center = (self.rect.center[0]+125, self.rect.center[1]-75)
+            button.actual_rect = button.rect

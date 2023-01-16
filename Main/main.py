@@ -1,7 +1,7 @@
 import pygame, sys
 from settings import *
 from level import Level
-from menus import Overworld, Menu, Button, Text, InputMenu
+from menus import Overworld, Menu, Button, Text, InputMenu, LeaderboardMenu
 
 import json
 
@@ -104,7 +104,6 @@ class Game:
 
         self.set_sound_volume(self.sfx_volume)
 
-
     def load_settings(self):
         with open('settings.json', 'r') as f:
             data = json.load(f)
@@ -140,8 +139,9 @@ class Game:
         self.level = Level(level, surface, self.create_overworld, self.get_action)
         self.status = 'level'
 
-    def create_leaderboard(self, surface):
-        self.leaderboard = Menu(surface, self.get_action, 'leaderboard')
+    def create_leaderboard(self, level):
+        self.leaderboard = LeaderboardMenu(screen, self.get_action, 'leaderboard', level=level)
+        print('leaderboard for level', level)
         self.status = 'leaderboard'
 
     def create_overworld(self, surface, current_level, max_level):
