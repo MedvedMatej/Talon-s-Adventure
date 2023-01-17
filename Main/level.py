@@ -329,8 +329,8 @@ class Level:
                                 entity.effect(player)
                         group.remove(bullet)
                     ##TODO: extend range?
-                    if bullet.rect.x > screen_width or bullet.rect.x < 0:
-                        group.remove(bullet)
+                    """ if bullet.rect.x > screen_width or bullet.rect.x < 0:
+                        group.remove(bullet) """
             if key == 'EnemyBullets':
                 for bullet in group:
                     if pygame.sprite.spritecollide(bullet, self.sprites['Player'], False):
@@ -338,8 +338,8 @@ class Level:
                         self.player.effects['damage'] = 1
                     if pygame.sprite.spritecollide(bullet, self.sprites['Terrain'], False):
                         group.remove(bullet)
-                    if bullet.rect.x > screen_width or bullet.rect.x < 0:
-                        group.remove(bullet)
+                    """ if bullet.rect.x > screen_width or bullet.rect.x < 0:
+                        group.remove(bullet) """
             if key == 'Platforms':
                 self.platform_collisions()
 
