@@ -8,6 +8,7 @@ from player import Player
 from game_data import levels
 from menus import Menu
 import json
+from camera import BoxCamera
 
 class Level:
     def __init__(self, selected_level, surface, overworld_method=None, get_action=None):
@@ -62,6 +63,10 @@ class Level:
 
         #Level timer
         self.start_time = pygame.time.get_ticks()
+        self.pause_time = None
+
+        #Camera
+        self.camera = BoxCamera()
 
         #UI overlay
         self.ui_overlay = Menu(self.surface, self.get_action, 'ui_overlay', True)
@@ -246,6 +251,7 @@ class Level:
         
         if keys[pygame.K_ESCAPE]:
             self.get_action('to_options')(True)
+            self.pause_time = pygame.time.get_ticks()
         if keys[pygame.K_p]:
             for text in self.ui_overlay.texts:
                 text.update('Paused')
@@ -289,6 +295,10 @@ class Level:
                 enemy.clear_bullets()
     
     def run(self):
+        if self.pause_time:
+            self.start_time += pygame.time.get_ticks() - self.pause_time
+            self.pause_time = None
+
         self.input()
 
         #Update
@@ -335,8 +345,6 @@ class Level:
 
         self.surface.fill((162, 235, 250))
         #Draw
-        for key, group in self.sprites.items():
-            if self.show_constraints or key != 'Constraints':
-                group.draw(self.surface)
+        self.camera.custom_draw(self.player, self.sprites, self.show_constraints)
 
         self.ui_overlay.run()
