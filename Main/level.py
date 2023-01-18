@@ -228,10 +228,16 @@ class Level:
             sprite = pygame.sprite.spritecollide(enemy, self.sprites['Constraints'], False)
             if sprite:
                 sprite = sprite[0]
-                if enemy.direction.x > 0:
-                    enemy.rect.right = sprite.rect.left
-                elif enemy.direction.x < 0:
-                    enemy.rect.left = sprite.rect.right
+                if (isinstance(enemy, FollowingEnemy)):
+                    if enemy.rect.right < sprite.rect.right:
+                        enemy.rect.right = sprite.rect.left - 1
+                    elif enemy.rect.left > sprite.rect.left:
+                        enemy.rect.left = sprite.rect.right + 1
+                else:
+                    if enemy.direction.x > 0:
+                        enemy.rect.right = sprite.rect.left
+                    elif enemy.direction.x < 0:
+                        enemy.rect.left = sprite.rect.right
 
                 if hasattr(enemy, 'following') and enemy.following:
                     enemy.barrier = True

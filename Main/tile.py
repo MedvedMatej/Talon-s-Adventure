@@ -166,7 +166,6 @@ class Bullet(AnimatedTile):
         self.rect.x += shift
         self.animate()
         self.rect.x += self.direction.x * self.speed
-
 class FollowingEnemy(Enemy):
     def __init__(self, pos, size, path, speed=5):
         super().__init__(pos, size, path, speed)
@@ -174,13 +173,15 @@ class FollowingEnemy(Enemy):
         self.default_speed = speed
         self.barrier = False
         self.default_direction = self.direction.x
+        self.default_direction = 0.2
+        self._prev_pos = self.rect.x
 
     def move(self):
         if self.direction.x < 0:
             self.image = pygame.transform.flip(self.image, True, False)
-        speed_boost = 4 if self.following else 1
-        self.rect.x += self.direction.x * self.speed * speed_boost
-        self.rect.y += self.direction.y * self.speed * speed_boost
+        
+        self.rect.x += self.direction.x * self.speed
+        self.rect.y += self.direction.y * self.speed
 
 
     def update(self, shift, player):
@@ -188,26 +189,28 @@ class FollowingEnemy(Enemy):
         self.animate()
         self.move()
 
-        if self.distance(player) < 200:
+        if self.distance(player):
             self.following = True
-            if self.direction.x < 0 and self.rect.x < player.rect.x:
-                self.direction.x = 0.2
-                self.barrier = False
-            elif self.direction.x > 0 and self.rect.x > player.rect.x:
-                self.direction.x = -0.2
-                self.barrier = False
-
+            if self.rect.x < player.rect.x:
+                self.direction.x += 0.025
+                
+            elif self.rect.x > player.rect.x:
+                self.direction.x -= 0.025
         else:
-            self.following = False
-        
-        if self.following and self.barrier:
-            self.speed = 0
-        else:
-            self.speed = self.default_speed
+            if self.following:
+                self.following = False
+                self.direction.x = self.default_direction if self.direction.x > 0 else -self.default_direction
             self.barrier = False
 
+        if self.barrier and self.following:
+            self.direction.x = self.default_direction if self.rect.x < player.rect.x else -self.default_direction
+
+        if self.rect.x != self._prev_pos:
+            self.barrier = False
+        self._prev_pos = self.rect.x
+
     def distance(self, player):
-        return math.sqrt((self.rect.x - player.rect.x)**2 + (self.rect.y - player.rect.y)**2)
+        return abs(player.rect.y - self.rect.y) < 150 and abs(player.rect.x - self.rect.x) < 200
 
 class ShootingEnemy(Enemy):
     def __init__(self, pos, size, path, speed=5, screen=None, sounds=None):
