@@ -98,7 +98,7 @@ class Level:
                         elif int(tile) in [232,233,234]:
                             sprite = TerrainTile((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface, 'Water')
                             self.sprites['Terrain'].add(sprite)
-                        elif int(tile) in [4]:
+                        elif int(tile) in [4,8]:
                             sprite = Spike((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface, 'Spike')
                             self.sprites['Terrain'].add(sprite)
                         elif int(tile) in [184,185,186]:
@@ -320,11 +320,15 @@ class Level:
                         self.win = True
             if key == 'Bullet':
                 for bullet in group:
-
-                    if pygame.sprite.spritecollide(bullet, self.sprites['Enemy'], False):
+                    
+                    colided = pygame.sprite.spritecollide(bullet, self.sprites['Enemy'], False)
+                    if colided:
                         group.remove(bullet)
-                    if pygame.sprite.spritecollide(bullet, self.sprites['Terrain'], False):
-                        for entity in pygame.sprite.spritecollide(bullet, self.sprites['Terrain'], False):
+                        for entity in colided:
+                            entity.damage(bullet.damage)
+                    colided = pygame.sprite.spritecollide(bullet, self.sprites['Terrain'], False)
+                    if colided:
+                        for entity in colided:
                             if type(entity) == SaveBlock:
                                 entity.effect(player)
                         group.remove(bullet)

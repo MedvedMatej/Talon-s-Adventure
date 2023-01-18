@@ -115,10 +115,16 @@ class AnimatedTile(Tile):
         self.rect.x += shift
 
 class Enemy(AnimatedTile):
-    def __init__(self, pos, size, path, speed=5):
+    def __init__(self, pos, size, path, speed=5, health=3):
         super().__init__(pos, size, path)
         self.direction = pygame.math.Vector2(0.2, 0)
         self.speed = speed
+        self.health = health
+
+    def damage(self, amount=1):
+        self.health -= amount
+        if self.health <= 0:
+            self.kill()
 
     def move(self):
         if self.direction.x < 0:
@@ -147,13 +153,14 @@ class SaveBlock(AnimatedTile):
         player.save()
 
 class Bullet(AnimatedTile):
-    def __init__(self, pos, size, path, scale=4, direction=1, speed=10, sounds=None):
+    def __init__(self, pos, size, path, scale=4, direction=1, speed=10, sounds=None, damage = 1):
         super().__init__(pos, size, path, scale)
         self.direction = pygame.math.Vector2(direction, 0)
         self.speed = speed
         sounds['hit'].play()
         #bullet_sound =  pygame.mixer.Sound('./assets/audio/effects/hit.wav')
         #bullet_sound.play()
+        self.damage = damage
 
     def update(self, shift):
         self.rect.x += shift
@@ -166,6 +173,7 @@ class FollowingEnemy(Enemy):
         self.following = False
         self.default_speed = speed
         self.barrier = False
+        self.default_direction = self.direction.x
 
     def move(self):
         if self.direction.x < 0:
