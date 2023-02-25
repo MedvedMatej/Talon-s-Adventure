@@ -9,6 +9,7 @@ from game_data import levels
 from menus import Menu
 import json
 from camera import BoxCamera
+from send_data import send_data_to_server_thread
 
 class Level:
     def __init__(self, selected_level, surface, overworld_method=None, get_action=None):
@@ -267,18 +268,23 @@ class Level:
             self.leaderboard = None
             #Read JSON file
             try:
-                with open(f'scoreboard_{self.selected_level}.json', 'r') as file:
+                with open(f'./scoreboards/scoreboard_{self.selected_level}.json', 'r') as file:
                     self.leaderboard = json.load(file)
             except:
                 self.leaderboard = []
 
+            name = self.get_action('input_text')
             seconds = (pygame.time.get_ticks() - self.start_time)/1000
             minutes = seconds//60
             seconds = seconds%60
-            self.leaderboard.append({'name': self.get_action('input_text'), 'deaths': self.player.death_counter, 'time': f'{str(int(minutes)).zfill(2)}:{str(int(seconds)).zfill(2)}'})
+            time = f'{str(int(minutes)).zfill(2)}:{str(int(seconds)).zfill(2)}'
+            self.leaderboard.append({'name': name, 'deaths': self.player.death_counter, 'time': time})
             #Write JSON file
-            with open(f'scoreboard_{self.selected_level}.json', 'w') as file:
+            with open(f'./scoreboards/scoreboard_{self.selected_level}.json', 'w') as file:
                 json.dump(self.leaderboard, file, indent=4)
+
+            #Send data to online leaderboard
+            send_data_to_server_thread(self.selected_level, name, self.player.death_counter, time)
             
             #print(self.selected_level ,self.player.death_counter, (pygame.time.get_ticks() - self.start_time)/1000, self.get_action('input_text'))
             self.create_overworld(self.surface,self.selected_level+1, self.selected_level+1)

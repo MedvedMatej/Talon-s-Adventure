@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Talon's Adventure</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: Arial, Helvetica, sans-serif;
+            margin:0;
+        }
+
+        .container {
+            
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding-top: 20px;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        .level_container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 100px;
+            min-width: 300px;
+        }
+
+        .level_container button {
+            width: 100%;
+            height: 50px;
+            margin: 10px;
+            font-size: 20px;
+        }
+
+        .leaderboard {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 300px;
+            height: 70vh;
+            margin-top: 100px;
+        }
+
+        .leaderboard button {
+            width: 100%;
+            height: 50px;
+            margin: 10px;
+            font-size: 20px;
+        }
+
+        .leaderboard-data {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .leaderboard-data table {
+            width: 100%;
+            height: 100%;
+            border-collapse: collapse;
+        }
+
+        .leaderboard-data table tr {
+            border-bottom: 1px solid #fff;
+        }
+
+        .leaderboard-data table th {
+            text-align: left;
+            padding: 10px;
+        }
+
+        .leaderboard-data table td {
+            text-align: left;
+            padding: 10px;
+        }
+
+        .d-none {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <script>
+
+        function getLeaderboard(level) {
+            let lb_container = $('.leaderboard');
+            let lb_title = $('.leaderboard-title');
+            let lb_data = $('.leaderboard-data');
+            let lb_levels = $('.level_container');
+
+            lb_title.html('Level ' + level);
+            lb_container.removeClass('d-none');
+            lb_levels.addClass('d-none');
+
+            $.ajax({
+                url: `/data/${level}`,
+                type: 'GET',
+                success: function(data) {
+                    lb_data.html("ERROR");
+                    console.log(data, data.length)
+                    if (data.length > 0) {
+                        let html = `<table>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Time</th>
+                                            <th>Deaths</th>
+                                        </tr>`;
+                        stop = 10
+                        if (data.length < 10) {
+                            stop = data.length;
+                        }
+                        for (let i = 0; i < stop; i++) {
+                            html += `<tr><td>${i + 1}. ${data[i].name}</td> <td>${data[i].time} </td> <td>${data[i].deaths}</td></tr>`;
+                        }
+                        html += '</table>';
+
+                        lb_data.html(html);
+                    } else {
+                        lb_data.html('No data');
+                    }
+                }
+            });
+
+        }
+
+        function getLevels() {
+            let lb_container = $('.leaderboard');
+            let lb_levels = $('.level_container');
+
+            lb_container.addClass('d-none');
+            lb_levels.removeClass('d-none');
+        }
+    </script>
+    <div class="container">
+        <h1>Talon's Adventure Online Leaderboard</h1>
+        <div class="level_container">
+            <button onclick="getLeaderboard(1)">Level 1</button>
+            <button onclick="getLeaderboard(2)">Level 2</button>
+            <button onclick="getLeaderboard(3)">Level 3</button>
+            <button onclick="getLeaderboard(4)">Level 4</button>
+            <button onclick="getLeaderboard(5)">Level 5</button>
+            <button onclick="getLeaderboard(6)">Level 6</button>
+            <button onclick="getLeaderboard(7)">Level 7</button>
+            <button onclick="getLeaderboard(8)">Level 8</button>
+            <button onclick="getLeaderboard(9)">Level 9</button>
+            <button onclick="getLeaderboard(10)">Level 10</button>
+        </div>
+        <div class="leaderboard d-none">
+            <h2 class="leaderboard-title"></h2>
+            <div class="leaderboard-data">1</div>
+            <button onclick="getLevels()" style="margin-top:auto;">Level selection</button>
+        </div>
+    </div>
+</body>
+</html>

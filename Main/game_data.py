@@ -8,7 +8,7 @@ levels = {
     1: {'position': (625, 325), 'path': 'assets/levels/level_1', 'data': level_1},
     2: {'position': (1050, 325), 'path': 'assets/levels/level_2', 'data': level_2},
     3: {'position': (1475, 325), 'path': 'assets/levels/level_3', 'data': level_3},
-    4: {'position': (1900, 325), 'path': 'assets/levels/level_4'},
+    4: {'position': (1900, 325), 'path': 'assets/levels/level_4', 'data': level_4},
     5: {'position': (2325, 325), 'path': 'assets/levels/level_4'},
     6: {'position': (2750, 325), 'path': 'assets/levels/level_4'},
     7: {'position': (3175, 325), 'path': 'assets/levels/level_4'},

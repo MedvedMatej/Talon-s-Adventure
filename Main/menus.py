@@ -86,13 +86,13 @@ class LeaderboardMenu(Menu):
         self.leaderboard = None
         #Read JSON file
         try:
-            with open(f"scoreboard_{level}.json", "r") as f:
+            with open(f"./scoreboards/scoreboard_{level}.json", "r") as f:
                 self.leaderboard = json.load(f)
                 #Sort by time and deaths
                 self.leaderboard.sort(key=lambda x: (x["time"], x["deaths"]))
                 self.leaderboard = self.leaderboard[:10]
         except:
-            with open(f"scoreboard_{level}.json", "w") as f:
+            with open(f"./scoreboards/scoreboard_{level}.json", "w") as f:
                 json.dump([], f)
             self.leaderboard = []
 

@@ -78,5 +78,65 @@
         "name": "ds",
         "deaths": 7,
         "time": "00:43"
+    },
+    {
+        "name": "d",
+        "deaths": 2,
+        "time": "00:19"
+    },
+    {
+        "name": "ff",
+        "deaths": 1,
+        "time": "00:20"
+    },
+    {
+        "name": "Matej",
+        "deaths": 0,
+        "time": "00:08"
+    },
+    {
+        "name": "medo",
+        "deaths": 1,
+        "time": "00:19"
+    },
+    {
+        "name": "medo",
+        "deaths": 1,
+        "time": "00:16"
+    },
+    {
+        "name": "medo",
+        "deaths": 1,
+        "time": "00:36"
+    },
+    {
+        "name": "Zzz",
+        "deaths": 0,
+        "time": "00:08"
+    },
+    {
+        "name": "Zzz",
+        "deaths": 1,
+        "time": "00:19"
+    },
+    {
+        "name": "Zzz",
+        "deaths": 0,
+        "time": "00:08"
+    },
+    {
+        "name": "ff",
+        "deaths": 1,
+        "time": "00:07"
+    },
+    {
+        "name": "ff",
+        "deaths": 0,
+        "time": "00:06"
+    },
+    {
+        "name": "Big",
+        "deaths": 4,
+        "time": "00:23"
     }
 ]
