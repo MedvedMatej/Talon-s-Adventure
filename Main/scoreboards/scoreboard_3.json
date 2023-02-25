@@ -13,5 +13,10 @@
         "name": "medo",
         "deaths": 1,
         "time": "00:36"
+    },
+    {
+        "name": "gfg",
+        "deaths": 0,
+        "time": "00:37"
     }
 ]
