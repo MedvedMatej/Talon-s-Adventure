@@ -110,6 +110,20 @@
                 success: function(data) {
                     lb_data.html("ERROR");
                     console.log(data, data.length)
+                    data.sort((a,b) =>{
+                        // Sort by time
+                        const timeA = a.time.split(":");
+                        const timeB = b.time.split(":");
+                        if (timeA[0] !== timeB[0]) {
+                            return parseInt(timeA[0]) - parseInt(timeB[0]);
+                        }
+                        if (timeA[1] !== timeB[1]) {
+                            return parseInt(timeA[1]) - parseInt(timeB[1]);
+                        }
+
+                        // If time is the same, sort by deaths
+                        return a.deaths - b.deaths;
+                    })
                     if (data.length > 0) {
                         let html = `<table>
                                         <tr>
