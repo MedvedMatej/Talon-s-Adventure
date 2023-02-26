@@ -86,10 +86,10 @@ class Level:
                                 sprite = Enemy((column*tile_size*4*global_scale, row*tile_size*4*global_scale), tile_size*self.sprites_scale[tile_type]*global_scale, f'./assets/{tile_type.lower()}/')
                                 self.sprites[tile_type].add(sprite)
                             elif int(tile) == 1:
-                                sprite = FollowingEnemy((column*tile_size*4*global_scale, row*tile_size*4*global_scale), tile_size*self.sprites_scale[tile_type]*global_scale, f'./assets/{tile_type.lower()}/')
+                                sprite = FollowingEnemy((column*tile_size*4*global_scale, row*tile_size*4*global_scale), tile_size*self.sprites_scale[tile_type]*global_scale, f'./assets/sprinting_enemy/')
                                 self.sprites[tile_type].add(sprite)
                             elif int(tile) == 2:
-                                sprite = ShootingEnemy((column*tile_size*4*global_scale, row*tile_size*4*global_scale), tile_size*self.sprites_scale[tile_type]*global_scale, f'./assets/{tile_type.lower()}/', sounds=self.sounds)
+                                sprite = ShootingEnemy((column*tile_size*4*global_scale, row*tile_size*4*global_scale), tile_size*self.sprites_scale[tile_type]*global_scale, f'./assets/shooting_enemy/', sounds=self.sounds)
                                 self.sprites[tile_type].add(sprite)
                     else:
                         tile_surface = self.sprites_graphics[tile_type][int(tile)]
@@ -291,7 +291,7 @@ class Level:
 
         for text in self.ui_overlay.texts:
             if text.id == 'keys':
-                text.update('Keys: {}'.format(self.player.keys))
+                text.update('Keys: {}/3'.format(self.player.keys))
             elif text.id == 'deaths':
                 text.update('Deaths: {}'.format(self.player.death_counter))
             elif text.id == 'timer':

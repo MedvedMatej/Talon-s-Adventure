@@ -23,5 +23,10 @@
         "name": "gfg",
         "deaths": 1,
         "time": "01:07"
+    },
+    {
+        "name": "d",
+        "deaths": 1,
+        "time": "00:53"
     }
 ]

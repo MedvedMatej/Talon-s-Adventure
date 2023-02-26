@@ -11,7 +11,7 @@ class BoxCamera(pygame.sprite.Group):
         self.half_h = self.display_surface.get_height() / 2
 
         #box
-        self.camera_borders = {'left': 624, 'right': 624, 'top': 350, 'bottom': 350}
+        self.camera_borders = {'left': 200, 'right': 200, 'top': 200, 'bottom': 200} #{'left': 624, 'right': 624, 'top': 350, 'bottom': 350}
         l = self.camera_borders['left']
         t = self.camera_borders['top']
         w = self.display_surface.get_width() - self.camera_borders['left'] - self.camera_borders['right']

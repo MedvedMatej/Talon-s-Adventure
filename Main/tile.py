@@ -223,9 +223,9 @@ class ShootingEnemy(Enemy):
 
     def shoot(self, player):
         if self.direction.x < 0:
-            bullet = Bullet((self.rect.x - 10, self.rect.y + 30), 10, './assets/bullet/', 1, -1,5, self.sounds)
+            bullet = Bullet((self.rect.x - 10, self.rect.y + 25), 10, './assets/bullet/', 1, -1,5, self.sounds)
         else:
-            bullet = Bullet((self.rect.x + 50, self.rect.y + 30), 10, './assets/bullet/', 1, 1,5, self.sounds)
+            bullet = Bullet((self.rect.x + 50, self.rect.y + 25), 10, './assets/bullet/', 1, 1,5, self.sounds)
         self.bullets.append(bullet)
 
     def update(self, shift, player):

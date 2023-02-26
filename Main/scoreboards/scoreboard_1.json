@@ -138,5 +138,20 @@
         "name": "Big",
         "deaths": 4,
         "time": "00:23"
+    },
+    {
+        "name": "b",
+        "deaths": 2,
+        "time": "00:24"
+    },
+    {
+        "name": "g",
+        "deaths": 0,
+        "time": "00:19"
+    },
+    {
+        "name": "d",
+        "deaths": 4,
+        "time": "01:37"
     }
 ]
