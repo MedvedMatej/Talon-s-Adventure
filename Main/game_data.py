@@ -25,7 +25,8 @@ mm_texts = [
 mm_buttons = [
     Button(position=(625, 400), text="Play", action="to_overworld", image=("assets/menu_assets/button_long.png"), offset=(-25, -25)),
     Button(position=(625, 500), text="Options", action="to_options", image=("assets/menu_assets/button_long.png"), offset=(-25, -25)),
-    Button(position=(625, 600), text="Quit", action="quit_game", image=("assets/menu_assets/button_long.png"), offset=(-25, -25)),
+    Button(position=(625, 600), text="Credits", action="to_credits", image=("assets/menu_assets/button_long.png"), offset=(-25, -25)),
+    Button(position=(625, 700), text="Quit", action="quit_game", image=("assets/menu_assets/button_long.png"), offset=(-25, -25)),
 ]
 
 #Options menu
@@ -73,6 +74,23 @@ lb_buttons = [
     Button(position=(625, 725), text="Level Selection", action="to_overworld", image=("assets/menu_assets/button_long.png"), offset=(-25, -25)),
 ]
 
+#Credits menu
+cr_texts = [
+    Text((625, 75), "Credits", 70),
+]
+
+with open('./assets/credits.txt', 'r') as f:
+    credits = f.read().splitlines()
+
+    for i, line in enumerate(credits):
+        text = Text((100, 150 + (i * 50)), line, 30, position_type='topleft')
+        cr_texts.append(text)
+
+
+cr_buttons = [
+    Button(position=(625, 725), text="Main Menu", action="to_main_menu", image=("assets/menu_assets/button_long.png"), offset=(-25, -25)),
+]
+
 #Menus
 menus = {
     'main_menu': {'texts': mm_texts, 'buttons': mm_buttons, 'background': ''}, #./assets/background/background2.png
@@ -80,4 +98,5 @@ menus = {
     'ui_overlay': {'texts': ui_texts, 'buttons': [], 'background': ''},
     'name_input': {'texts': ni_texts, 'buttons': ni_buttons, 'background': ''},
     'leaderboard': {'texts': lb_texts, 'buttons': lb_buttons, 'background': ''},
+    'credits': {'texts': cr_texts, 'buttons': cr_buttons, 'background': ''},
 }

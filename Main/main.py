@@ -8,7 +8,7 @@ import json
 class Game:
     def __init__(self):
         #Starting values
-        self.max_level = 2
+        self.max_level = 20
         self.selected_level = 1
 
         #Audio
@@ -25,6 +25,7 @@ class Game:
         self.name_input = InputMenu(screen, self.get_action, 'name_input')
         self.input_text = ""
         self.leaderboard = None#Menu(screen, self.get_action, 'leaderboard')
+        self.credits = Menu(screen, self.get_action, 'credits')
         
         self.status = 'main_menu'
         #self.status = 'leaderboard'
@@ -174,6 +175,9 @@ class Game:
         else:
             self.status = 'name_input'
 
+    def to_credits(self):
+        self.status = 'credits'
+
     def to_level(self):
         self.status = 'level'
 
@@ -190,6 +194,8 @@ class Game:
             self.level.run()
         elif self.status == 'leaderboard':
             self.leaderboard.run(self.clicks)
+        elif self.status == 'credits':
+            self.credits.run(self.clicks)
         self.clicks = []
 
 #Initialize pygame
