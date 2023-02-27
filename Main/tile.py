@@ -16,6 +16,7 @@ class StaticTile(Tile):
         super().__init__(pos, size)
         self.image = image
         self.image_hidden = image
+        self.mask = pygame.mask.from_surface(self.image)
 
 class TerrainTile(StaticTile):
     def __init__(self, pos,size, image, type):
@@ -49,9 +50,6 @@ class CollectableTile(StaticTile):
     def effect(self, player):
         if self.type == 'jump_boost':
             player.available_jumps += 1
-        elif self.type == 'portal':
-            if player.keys > 2:
-                player.win = True
         elif self.type == 'key':
             player.keys += 1
 
@@ -98,6 +96,7 @@ class AnimatedTile(Tile):
         self.selected_animation = 'idle' if 'idle' in self.animations.keys() else list(self.animations.keys())[0]
         self.index = 0
         self.image = self.animations[self.selected_animation][self.index]
+        self.mask = pygame.mask.from_surface(self.image)
 
     def set_animation(self, animation):
         if animation != self.selected_animation:
@@ -151,6 +150,15 @@ class SaveBlock(AnimatedTile):
 
     def effect(self, player):
         player.save()
+
+class Portal(AnimatedTile):
+    def __init__(self, pos, size, path):
+        super().__init__(pos, size, path)
+        self.type='portal'
+
+    def effect(self, player):
+        if player.keys > 2:
+            player.win = True
 
 class Bullet(AnimatedTile):
     def __init__(self, pos, size, path, scale=4, direction=1, speed=10, sounds=None, damage = 1):

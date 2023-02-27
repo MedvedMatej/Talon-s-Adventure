@@ -110,7 +110,7 @@ class Level:
                             self.sprites['Platforms'].add(sprite)
                         elif tile_type == 'Collectables':
                             if int(tile) in [5]:
-                                sprite = CollectableTile((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface, type='portal', despawn=False)
+                                sprite = Portal((column*tile_size*4*global_scale, row*tile_size*4*global_scale), tile_size*self.sprites_scale[tile_type]*global_scale, './assets/portal/')
                                 self.sprites['Collectables'].add(sprite)
                             elif int(tile) in [404]:
                                 sprite = CollectableTile((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface, type='key', respawnable=False)
@@ -122,21 +122,6 @@ class Level:
                             sprite = StaticTile((column*tile_size*4*global_scale, row*tile_size*4*global_scale),tile_size*self.sprites_scale[tile_type]*global_scale, tile_surface)
                             self.sprites[tile_type].add(sprite)
 
-    def scroll_x(self):
-        player = self.player
-        player_x = player.rect.centerx
-        direction_x = player.direction.x
-
-        if player_x < screen_width/4 and direction_x < 0:
-            self.world_shift = player_speed
-            player.speed = 0
-        elif player_x > screen_width*3/4 and direction_x > 0:
-            self.world_shift = -player_speed
-            player.speed = 0
-        else:  
-            self.world_shift = 0
-            player.speed = player_speed
-
     def horizontal_collisions(self, player):
         multiplier = (1 if not 'speed_multiplier' in player.effects else player.effects['speed_multiplier'])
         player.rect.x += player.direction.x * player.speed * multiplier
@@ -146,15 +131,20 @@ class Level:
             if sprite.rect.colliderect(player.rect):
                 ##TODO: Check for bugs
                 if hasattr(sprite, 'effects'):
-                    player.give_effects(sprite.effects)
-                    player.on_effected_tile = True
+                    if pygame.sprite.collide_mask(player, sprite):
+                        player.give_effects(sprite.effects)
+                        player.on_effected_tile = True
+                        if player.direction.x > 0:
+                            player.rect.right = sprite.rect.left
+                        elif player.direction.x < 0:
+                            player.rect.left = sprite.rect.right
                 else:
                     player.on_effected_tile = False
                     player.clear_effects()
-                if player.direction.x > 0:
-                    player.rect.right = sprite.rect.left
-                elif player.direction.x < 0:
-                    player.rect.left = sprite.rect.right
+                    if player.direction.x > 0:
+                        player.rect.right = sprite.rect.left
+                    elif player.direction.x < 0:
+                        player.rect.left = sprite.rect.right
 
         for sprite in self.sprites['Platforms']:
             if sprite.rect.colliderect(player.rect):
@@ -168,7 +158,7 @@ class Level:
                         player.rect.x += sprite.direction.x * sprite.speed + 1
         
         for sprite in self.sprites['Collectables']:
-            if sprite.rect.colliderect(player.rect) and sprite.active:
+            if sprite.rect.colliderect(player.rect) and sprite.type != 'portal' and sprite.active and pygame.sprite.collide_mask(player, sprite):
                 sprite.effect(player)
                 sprite.collect()
                 #play collect sound for key
@@ -176,9 +166,11 @@ class Level:
 
                 if not sprite.respawnable:
                     self.sprites['Collectables'].remove(sprite)
+            elif sprite.rect.colliderect(player.rect) and sprite.type == 'portal' and pygame.sprite.collide_mask(player, sprite):
+                sprite.effect(player)
 
         for sprite in self.sprites['Enemy']:
-            if sprite.rect.colliderect(player.rect):
+            if sprite.rect.colliderect(player.rect) and pygame.sprite.collide_mask(player, sprite):
                 player.effects['damage'] = 1
                 #player.load_save()
     
@@ -190,19 +182,32 @@ class Level:
         for sprite in self.sprites['Terrain']:
             if sprite.rect.colliderect(player.rect):
                 if hasattr(sprite, 'effects'):
-                    player.give_effects(sprite.effects)
-                    player.on_effected_tile = True
+                    if pygame.sprite.collide_mask(player, sprite):
+                        player.give_effects(sprite.effects)
+                        player.on_effected_tile = True
+                        player.platform = (0,0,0)
+                        if player.direction.y > 0:
+                            #player.rect.bottom = sprite.rect.top
+                            while pygame.sprite.collide_mask(player, sprite):
+                                player.rect.y -= 0.1
+                            player.direction.y = 0
+                            player.on_ground = True
+                        elif player.direction.y < 0:
+                            player.rect.top = sprite.rect.bottom
+                            player.direction.y = 0
                 else:
                     player.on_effected_tile = False
                     player.clear_effects()
-                player.platform = (0,0,0)
-                if player.direction.y > 0:
-                    player.rect.bottom = sprite.rect.top
-                    player.direction.y = 0
-                    player.on_ground = True
-                elif player.direction.y < 0:
-                    player.rect.top = sprite.rect.bottom
-                    player.direction.y = 0
+                    player.platform = (0,0,0)
+                    if player.direction.y > 0:
+                        player.rect.bottom = sprite.rect.top
+                        """ while pygame.sprite.collide_mask(player, sprite):
+                            player.rect.y -= 0.1 """
+                        player.direction.y = 0
+                        player.on_ground = True
+                    elif player.direction.y < 0:
+                        player.rect.top = sprite.rect.bottom
+                        player.direction.y = 0
 
         for sprite in self.sprites['Platforms']:
             if sprite.rect.colliderect(player.rect):
@@ -218,7 +223,7 @@ class Level:
                         player.rect.y += sprite.direction.y * sprite.speed + 1
     
         for sprite in self.sprites['Enemy']:
-            if sprite.rect.colliderect(player.rect):
+            if sprite.rect.colliderect(player.rect)  and pygame.sprite.collide_mask(player, sprite):
                 player.effects['damage'] = 1
                 #player.load_save()
 
@@ -322,7 +327,6 @@ class Level:
             else:
                 group.update(self.world_shift)
             if key == 'Player':
-                #self.scroll_x()
                 for player in group:
                     player.get_input(self.sprites)
                     self.vertical_collisions(player)
@@ -337,7 +341,8 @@ class Level:
                     if colided:
                         group.remove(bullet)
                         for entity in colided:
-                            entity.damage(bullet.damage)
+                            if pygame.sprite.collide_mask(entity, bullet):
+                                entity.damage(bullet.damage)
                     colided = pygame.sprite.spritecollide(bullet, self.sprites['Terrain'], False)
                     if colided:
                         for entity in colided:
@@ -349,7 +354,7 @@ class Level:
                         group.remove(bullet) """
             if key == 'EnemyBullets':
                 for bullet in group:
-                    if pygame.sprite.spritecollide(bullet, self.sprites['Player'], False):
+                    if pygame.sprite.spritecollide(bullet, self.sprites['Player'], False) and pygame.sprite.collide_mask(player, bullet):
                         group.remove(bullet)
                         self.player.effects['damage'] = 1
                     if pygame.sprite.spritecollide(bullet, self.sprites['Terrain'], False):

@@ -52,7 +52,7 @@ class Player(AnimatedTile):
 
     def save(self):
         for key,value in self.__dict__.items():
-            if key not in ['_Sprite__g', 'image', 'animations', 'reset_cooldown', 'saved_player', 'death_counter', 'keys', 'sounds']:
+            if key not in ['_Sprite__g', 'image', 'animations', 'reset_cooldown', 'saved_player', 'death_counter', 'keys', 'sounds', 'mask']:
                 self.saved_player[key] = copy.deepcopy(value)
         self.saved_player['reset_cooldown'] = True
             
