@@ -127,6 +127,26 @@ class LeaderboardMenu(Menu):
         self.buttons.draw(self.surface)
         self.texts.draw(self.surface)
 
+class SlidesMenu:
+    def __init__(self, surface, get_action, path, slides):
+        self.surface = surface
+        self.get_action = get_action
+        self.path = path
+        self.slides = slides
+        self.current_slide = 1
+        self.slide = pygame.image.load(self.path + str(self.current_slide)+".png")
+
+    def input(self, clicks):
+        if clicks:
+            self.current_slide += 1
+            if self.current_slide >= self.slides:
+                self.get_action("to_overworld")()
+            self.slide = pygame.image.load(self.path + str(self.current_slide)+".png")
+
+    def run(self, clicks = None):
+        self.input(clicks)
+        self.surface.blit(self.slide, (0, 0))
+
 class Overworld:
     def __init__(self, surface, start_level=1, max_level=2, speed= 16, level_method=None, get_action=None):
         self.surface = surface

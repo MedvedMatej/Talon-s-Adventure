@@ -1,7 +1,7 @@
 import pygame, sys
 from settings import *
 from level import Level
-from menus import Overworld, Menu, Button, Text, InputMenu, LeaderboardMenu
+from menus import Overworld, Menu, Button, Text, InputMenu, LeaderboardMenu, SlidesMenu
 
 import json
 
@@ -26,6 +26,7 @@ class Game:
         self.input_text = ""
         self.leaderboard = None#Menu(screen, self.get_action, 'leaderboard')
         self.credits = Menu(screen, self.get_action, 'credits')
+        self.tutorial = SlidesMenu(screen, self.get_action, './assets/tutorial/slide_', 5)
         
         self.status = 'main_menu'
         #self.status = 'leaderboard'
@@ -178,6 +179,9 @@ class Game:
     def to_credits(self):
         self.status = 'credits'
 
+    def to_tutorial(self):
+        self.status = 'tutorial'
+
     def to_level(self):
         self.status = 'level'
 
@@ -196,6 +200,8 @@ class Game:
             self.leaderboard.run(self.clicks)
         elif self.status == 'credits':
             self.credits.run(self.clicks)
+        elif self.status == 'tutorial':
+            self.tutorial.run(self.clicks)
         self.clicks = []
 
 #Initialize pygame

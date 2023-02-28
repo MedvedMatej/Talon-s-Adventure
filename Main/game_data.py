@@ -62,7 +62,7 @@ ni_texts = [
 
 ni_buttons = [
     Button(position=(625,650), text="Main Menu", action="to_main_menu", image=("assets/menu_assets/button_long.png"), offset=(-25, -25)),
-    Button(position=(625,550), text="Play", action="to_overworld", image=("assets/menu_assets/button_long.png"), offset=(-25, -25)),
+    Button(position=(625,550), text="Play", action="to_tutorial", image=("assets/menu_assets/button_long.png"), offset=(-25, -25)),
 ]
 
 #Leaderboard
