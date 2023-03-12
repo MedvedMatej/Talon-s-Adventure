@@ -35,6 +35,14 @@ class BoxCamera(pygame.sprite.Group):
 
         for key, group in sprites.items():
             for sprite in group.sprites():
+                #Skip sprites that are not on screen
+                #X-axis
+                if sprite.rect.right < self.offset.x or sprite.rect.left > self.offset.x + self.display_surface.get_width():
+                    continue
+                #Y-axis
+                if sprite.rect.bottom < self.offset.y or sprite.rect.top > self.offset.y + self.display_surface.get_height():
+                    continue
+
                 if show_constraints or key != 'Constraints':
                     offset_pos = sprite.rect.topleft - self.offset
                     self.display_surface.blit(sprite.image, offset_pos)

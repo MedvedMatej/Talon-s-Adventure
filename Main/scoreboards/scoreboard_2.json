@@ -33,5 +33,10 @@
         "name": "f",
         "deaths": 0,
         "time": "00:41"
+    },
+    {
+        "name": "Matej",
+        "deaths": 0,
+        "time": "00:54"
     }
 ]
