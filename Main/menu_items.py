@@ -84,7 +84,9 @@ class Button(pygame.sprite.Sprite):
         self.call_action = get_action(self.action)
     
     def update(self, show_hidden=False, mouse_pos=None):
-        if len(mouse_pos) == 2 and self.actual_rect.collidepoint(mouse_pos):
+        resize_scale = self.get_action('resize_scale')
+        #print(mouse_pos[0]/resize_scale, mouse_pos[1]/resize_scale)
+        if len(mouse_pos) == 2 and self.actual_rect.collidepoint((mouse_pos[0]/resize_scale, mouse_pos[1]/resize_scale)):
             self.image = self._himage
         else:
             self.image = self._image

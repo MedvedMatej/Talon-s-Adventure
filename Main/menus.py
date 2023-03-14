@@ -34,10 +34,10 @@ class Menu:
     def input(self, clicks=None):
         if not clicks:
             return
-
+        resize_scale = self.get_action("resize_scale")
         for click in clicks:
             for button in self.buttons:
-                if button.actual_rect.collidepoint(click):
+                if button.actual_rect.collidepoint([click[0]/resize_scale, click[1]/resize_scale]):
                     button.click()
 
     def run(self, clicks=None):
@@ -191,14 +191,15 @@ class Overworld:
                 self.nodes.add(Node((value['position'][0] - 425*(self.selected_level-1),value['position'][1]), speed=self.speed, id=key, get_action=self.get_action))
 
     def input(self, clicks=None):
+        resize_scale = self.get_action("resize_scale")
         for click in clicks:
             for button in self.buttons:
-                if button.actual_rect.collidepoint(click):
+                if button.actual_rect.collidepoint([click[0]/resize_scale, click[1]/resize_scale]):
                     button.click()
 
             for node in self.nodes:
                 for button in node.buttons:
-                    if button.actual_rect.collidepoint(click):
+                    if button.actual_rect.collidepoint([click[0]/resize_scale, click[1]/resize_scale]):
                         button.click()
 
             ##TODO: Check click on level nodes
