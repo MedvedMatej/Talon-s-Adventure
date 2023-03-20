@@ -49,8 +49,23 @@ app.post('/save-score', (req, res) => {
         // Parse existing data as JSON
         const existingData = JSON.parse(fileData);
     
-        // Append new data to existing data
-        existingData.push(data.data);
+        //Insert data in correct position
+        let index = existingData.findIndex((element) => {
+          const [minutes, seconds] = element.time.split(':').map(Number);
+          const [dataMinutes, dataSeconds] = data.data.time.split(':').map(Number);
+        
+          return minutes > dataMinutes || (minutes === dataMinutes && seconds > dataSeconds) || (minutes === dataMinutes && seconds === dataSeconds && element.deaths > data.data.deaths);
+        });
+
+        if (index === -1) {
+          index = existingData.length;
+        }
+        console.log(index)
+
+        existingData.splice(index, 0, data.data);
+
+        //Limit to 100 entries
+        existingData.splice(100);
     
         // Write updated data back to file
         fs.writeFile(filePath, JSON.stringify(existingData), (err) => {

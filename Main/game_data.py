@@ -9,12 +9,12 @@ levels = {
     2: {'position': (1050, 325), 'path': 'assets/levels/level_2', 'data': level_2},
     3: {'position': (1475, 325), 'path': 'assets/levels/level_3', 'data': level_3},
     4: {'position': (1900, 325), 'path': 'assets/levels/level_4', 'data': level_4},
-    5: {'position': (2325, 325), 'path': 'assets/levels/level_4'},
-    6: {'position': (2750, 325), 'path': 'assets/levels/level_4'},
-    7: {'position': (3175, 325), 'path': 'assets/levels/level_4'},
-    8: {'position': (3600, 325), 'path': 'assets/levels/level_4'},
-    9: {'position': (4025, 325), 'path': 'assets/levels/level_4'},
-    10: {'position': (4450, 325), 'path': 'assets/levels/level_4'},
+    5: {'position': (2325, 325), 'path': 'assets/levels/level_5', 'data': level_5},
+    6: {'position': (2750, 325), 'path': 'assets/levels/level_6', 'data': level_6},
+    7: {'position': (3175, 325), 'path': 'assets/levels/level_7', 'data': level_7},
+    8: {'position': (3600, 325), 'path': 'assets/levels/level_8', 'data': level_8},
+    9: {'position': (4025, 325), 'path': 'assets/levels/level_9', 'data': level_9},
+    10: {'position': (4450, 325), 'path': 'assets/levels/level_10', 'data': level_10},
 }
 
 #Main Menu
@@ -62,7 +62,7 @@ ni_texts = [
 
 ni_buttons = [
     Button(position=(625,650), text="Main Menu", action="to_main_menu", image=("assets/menu_assets/button_long.png"), offset=(-25, -25)),
-    Button(position=(625,550), text="Play", action="to_overworld", image=("assets/menu_assets/button_long.png"), offset=(-25, -25)),
+    Button(position=(625,550), text="Play", action="to_tutorial", image=("assets/menu_assets/button_long.png"), offset=(-25, -25)),
 ]
 
 #Leaderboard

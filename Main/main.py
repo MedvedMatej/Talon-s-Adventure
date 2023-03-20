@@ -1,14 +1,14 @@
 import pygame, sys
 from settings import *
 from level import Level
-from menus import Overworld, Menu, Button, Text, InputMenu, LeaderboardMenu
+from menus import Overworld, Menu, Button, Text, InputMenu, LeaderboardMenu, SlidesMenu
 
 import json
 
 class Game:
     def __init__(self):
         #Starting values
-        self.max_level = 20
+        self.max_level = 1
         self.selected_level = 1
 
         #Audio
@@ -26,6 +26,7 @@ class Game:
         self.input_text = ""
         self.leaderboard = None#Menu(screen, self.get_action, 'leaderboard')
         self.credits = Menu(screen, self.get_action, 'credits')
+        self.tutorial = SlidesMenu(screen, self.get_action, './assets/tutorial/slide_', 5)
         
         self.status = 'main_menu'
         #self.status = 'leaderboard'
@@ -40,6 +41,7 @@ class Game:
         self.load_settings()
         self.apply_settings()
         self.music.play(loops=-1)
+        self.resize_scale = 1
 
     def set_sounds(self):
         self.sounds['hit'] = pygame.mixer.Sound('./assets/audio/effects/hit.wav')
@@ -178,8 +180,14 @@ class Game:
     def to_credits(self):
         self.status = 'credits'
 
+    def to_tutorial(self):
+        self.status = 'tutorial'
+
     def to_level(self):
         self.status = 'level'
+
+    def resize_scale(self):
+        return self.resize_scale
 
     def run(self):
         if self.status == 'name_input':
@@ -196,14 +204,22 @@ class Game:
             self.leaderboard.run(self.clicks)
         elif self.status == 'credits':
             self.credits.run(self.clicks)
+        elif self.status == 'tutorial':
+            self.tutorial.run(self.clicks)
         self.clicks = []
 
 #Initialize pygame
 pygame.init()
-screen = pygame.display.set_mode((screen_width, screen_height))
+real_screen = pygame.display.set_mode((screen_width, screen_height), pygame.RESIZABLE)
+screen = pygame.Surface((screen_width, screen_height))
 pygame.display.set_caption("Talon's Adventure")
 clock = pygame.time.Clock()
 game = Game()
+screen_ratio = screen_width/screen_height
+resize_scale = 1
+resize_change = False
+old_width = screen_width
+old_height = screen_height
 
 while True:
     for event in pygame.event.get():
@@ -222,7 +238,31 @@ while True:
                         game.create_overworld(screen, game.selected_level, game.max_level)
                 elif len(game.input_text) < 16:
                     game.input_text += event.unicode
+        if event.type == pygame.VIDEORESIZE:
+
+            diff_x = int(abs(real_screen.get_width() - old_width))
+            diff_y = int(abs(real_screen.get_height() - old_height))
+            #print(diff_x, diff_y)
+            if diff_x > diff_y:
+                real_screen = pygame.display.set_mode((event.w, int(event.w/screen_ratio)), pygame.RESIZABLE)
+            else:
+                real_screen = pygame.display.set_mode((int(event.h*screen_ratio), event.h), pygame.RESIZABLE)
             
+            #print(real_screen.get_width(), real_screen.get_height())
+            if real_screen.get_width() < 800:
+                real_screen = pygame.display.set_mode((800, int(800/screen_ratio)), pygame.RESIZABLE)
+            
+            game.resize_scale = real_screen.get_width()/screen_width
+            #print(game.resize_scale)
+
+            old_height = int(real_screen.get_height())
+            old_width = int(real_screen.get_width())
+
+
+
+            
+    #screen = pygame.Surface((screen_width, screen_height))
+    real_screen.blit(pygame.transform.scale(screen, real_screen.get_size()), (0,0))
     game.run()
     pygame.display.update()
     clock.tick(60)

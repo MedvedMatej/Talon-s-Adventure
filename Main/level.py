@@ -67,7 +67,7 @@ class Level:
         self.pause_time = None
 
         #Camera
-        self.camera = BoxCamera()
+        self.camera = BoxCamera(self.get_action)
 
         #UI overlay
         self.ui_overlay = Menu(self.surface, self.get_action, 'ui_overlay', True)
@@ -366,6 +366,6 @@ class Level:
 
         self.surface.fill((162, 235, 250))
         #Draw
-        self.camera.custom_draw(self.player, self.sprites, self.show_constraints)
+        self.camera.custom_draw(self.player, self.sprites, self.ui_overlay, self.show_constraints)
 
-        self.ui_overlay.run()
+        #self.ui_overlay.run()

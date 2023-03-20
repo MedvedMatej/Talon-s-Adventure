@@ -34,10 +34,10 @@ class Menu:
     def input(self, clicks=None):
         if not clicks:
             return
-
+        resize_scale = self.get_action("resize_scale")
         for click in clicks:
             for button in self.buttons:
-                if button.actual_rect.collidepoint(click):
+                if button.actual_rect.collidepoint([click[0]/resize_scale, click[1]/resize_scale]):
                     button.click()
 
     def run(self, clicks=None):
@@ -127,6 +127,26 @@ class LeaderboardMenu(Menu):
         self.buttons.draw(self.surface)
         self.texts.draw(self.surface)
 
+class SlidesMenu:
+    def __init__(self, surface, get_action, path, slides):
+        self.surface = surface
+        self.get_action = get_action
+        self.path = path
+        self.slides = slides
+        self.current_slide = 1
+        self.slide = pygame.image.load(self.path + str(self.current_slide)+".png")
+
+    def input(self, clicks):
+        if clicks:
+            self.current_slide += 1
+            if self.current_slide >= self.slides:
+                self.get_action("to_overworld")()
+            self.slide = pygame.image.load(self.path + str(self.current_slide)+".png")
+
+    def run(self, clicks = None):
+        self.input(clicks)
+        self.surface.blit(self.slide, (0, 0))
+
 class Overworld:
     def __init__(self, surface, start_level=1, max_level=2, speed= 16, level_method=None, get_action=None):
         self.surface = surface
@@ -171,14 +191,15 @@ class Overworld:
                 self.nodes.add(Node((value['position'][0] - 425*(self.selected_level-1),value['position'][1]), speed=self.speed, id=key, get_action=self.get_action))
 
     def input(self, clicks=None):
+        resize_scale = self.get_action("resize_scale")
         for click in clicks:
             for button in self.buttons:
-                if button.actual_rect.collidepoint(click):
+                if button.actual_rect.collidepoint([click[0]/resize_scale, click[1]/resize_scale]):
                     button.click()
 
             for node in self.nodes:
                 for button in node.buttons:
-                    if button.actual_rect.collidepoint(click):
+                    if button.actual_rect.collidepoint([click[0]/resize_scale, click[1]/resize_scale]):
                         button.click()
 
             ##TODO: Check click on level nodes

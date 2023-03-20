@@ -1,9 +1,11 @@
 import pygame
-
+from settings import screen_height, screen_width
 class BoxCamera(pygame.sprite.Group):
-    def __init__(self):
+    def __init__(self, get_action):
         super().__init__()
-        self.display_surface = pygame.display.get_surface()
+        self.screen = pygame.display.get_surface()
+        self.display_surface = pygame.Surface((screen_width, screen_height))
+        self.get_action = get_action
 
         #camera offset
         self.offset = pygame.math.Vector2()
@@ -30,11 +32,26 @@ class BoxCamera(pygame.sprite.Group):
         self.offset.x = self.camera_rect.left - self.camera_borders['left']
         self.offset.y = self.camera_rect.top - self.camera_borders['top']
 
-    def custom_draw(self, player, sprites, show_constraints=False):
+    def custom_draw(self, player, sprites, ui, show_constraints=False):
         self.box_target(player)
 
         for key, group in sprites.items():
             for sprite in group.sprites():
+                #Skip sprites that are not on screen
+                #X-axis
+                if sprite.rect.right < self.offset.x or sprite.rect.left > self.offset.x + self.display_surface.get_width():
+                    continue
+                #Y-axis
+                if sprite.rect.bottom < self.offset.y or sprite.rect.top > self.offset.y + self.display_surface.get_height():
+                    continue
+
                 if show_constraints or key != 'Constraints':
                     offset_pos = sprite.rect.topleft - self.offset
                     self.display_surface.blit(sprite.image, offset_pos)
+        
+        ui.buttons.draw(self.display_surface)
+        ui.texts.draw(self.display_surface)
+
+        self.screen.blit(pygame.transform.scale(self.display_surface, self.screen.get_rect().size), (0, 0))
+        self.display_surface.fill((162, 235, 250))
+
