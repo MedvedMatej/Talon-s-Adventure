@@ -8,7 +8,7 @@ import json
 class Game:
     def __init__(self):
         #Starting values
-        self.max_level = 10
+        self.max_level = 1
         self.selected_level = 1
 
         #Audio
